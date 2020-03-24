@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 
-const route = require('./routes/route');
+// const route = require('./routes/route');
 
 mongoose.connect('mongodb://localhost:27017/redApp', {useNewUrlParser: true, useUnifiedTopology: true })
 	.then(result => {
