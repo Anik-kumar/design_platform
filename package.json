@@ -1,0 +1,28 @@
+{
+  "name": "red-app",
+  "version": "1.0.0",
+  "description": "simple website in development phase",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "start-once": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "red-app"
+  ],
+  "author": "ANiK",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "http": "0.0.0",
+    "mongodb": "^3.5.5",
+    "mongoose": "^5.9.5",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
