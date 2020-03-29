@@ -8,7 +8,7 @@ const mongoose = mongoService.getClient();
 
 var schema = new mongoose.Schema({
 	id: mongoose.Schema.Types.ObjectId,
-	unique_identifier: String,
+	unique_id: String,
 	email: String,
 	name: {
 		first: String,
@@ -23,7 +23,7 @@ var schema = new mongoose.Schema({
 		house: Number,
 		street: String,
 		police_station: String,
-		postal_code: Number, 
+		postal_code: Number,
 		city: String,
 	},
 	role: [],
@@ -116,4 +116,4 @@ var schema = new mongoose.Schema({
 	last_login: Date
 });
 
-module.exports = mongoose.model('Users', schema);
+module.exports = mongoose.model('User', schema);
