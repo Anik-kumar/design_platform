@@ -14,8 +14,9 @@ const loggingService = require('./services/LoggingService');
 
 // import routes
 const interceptRequest = require('./routes/InterceptRequest');
-const routes = require('./routes/routes');
+const indexRoutes = require('./routes/IndexRouter');
 const authRoutes = require('./routes/AuthRouter');
+const userRoutes = require('./routes/UserRouter');
 
 const ConfigLoader = require('./config/ConfigLoader');
 const config = new ConfigLoader();
@@ -45,8 +46,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(interceptRequest);
 
 // route middlewares
-app.use('/', routes);
-app.use('/auth/', authRoutes);
+// app.use('/', indexRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+
+app.use('/', indexRoutes);
 
 
 // catch 404 and forward to error handler
