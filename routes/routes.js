@@ -1,13 +1,22 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/car', (req, res)=>{
+router.get('/', (req, res)=>{
 
-	res.send("Cars");
+	res.send("Welcome to HOme Page");
 
 });
 
 
+
+
+
+
+
+
+router.use((req, res, next) => {
+	res.status(404).send('Content Not Found');
+});
 
 
 module.exports = router;

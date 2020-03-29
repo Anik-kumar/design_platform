@@ -1,8 +1,15 @@
 const express = require('express');
-const app = express();
 const mongoose = require('mongoose');
+const app = express();
 
-// const route = require('./routes/route');
+const bodyParser = require('body-parser');
+
+// import routes
+const routes = require('./routes/routes');
+const authRoutes = require('./routes/authRoutes');
+
+app.use(bodyParser.urlencoded({extended: false}));
+
 
 mongoose.connect('mongodb://localhost:27017/redApp', {useNewUrlParser: true, useUnifiedTopology: true })
 	.then(result => {
@@ -12,16 +19,18 @@ mongoose.connect('mongodb://localhost:27017/redApp', {useNewUrlParser: true, use
 		console.error(`Error Connecting Database. ${error}`);
 	});
 
+// middlewares
+app.use(express.json());
 
-app.get('/', (req, res)=>{
-	res.send('Hello, Welcome To Home Page');
-});
+// route middlewares
+app.use('/auth/', authRoutes);
+app.use('/', routes);
 
 
 
 
-const PORT = process.env.PORT | 3000;
 
-app.listen(PORT, ()=>{
-	console.log(`Server is running on port ${PORT}`);
+const port = process.env.PORT | 3000;
+app.listen(port, () => {
+	console.log(`Server is running on port ${port}`);
 });
