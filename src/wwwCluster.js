@@ -21,19 +21,46 @@ let config = new configLoader();
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
 
-var server = http.createServer(app);
 
-/**
- * Listen on provided port, on all network interfaces.
- */
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+if (cluster.isMaster) {
+    console.log(`Master ${process.pid} is running`);
+
+    // Fork workers.
+    for (let i = 0; i < numCPUs; i++) {
+        cluster.fork();
+    }
+
+    cluster.on('exit', (worker, code, signal) => {
+        console.log(`worker ${worker.process.pid} died`);
+    });
+} else {
+    // Workers can share any TCP connection
+    // In this case it is an HTTP server
+    // http.createServer((req, res) => {
+    //     res.writeHead(200);
+    //     res.end('hello world\n');
+    // }).listen(8000);
+
+    /**
+     * Create HTTP server.
+     */
+
+    var server = http.createServer(app);
+
+    /**
+     * Listen on provided port, on all network interfaces.
+     */
+
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+
+    console.log(`Worker ${process.pid} started`);
+}
+
+
 
 /**
  * Normalize a port into a number, string, or false.
@@ -58,7 +85,7 @@ function normalizePort(val) {
 process.on('unhandledRejection', error => {
     // Will print "unhandledRejection err is not defined"
     console.log('unhandledRejection >>>> ', error);
-});
+  });
 /**
  * Event listener for HTTP server "error" event.
  */

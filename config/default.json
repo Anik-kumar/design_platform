@@ -1,0 +1,19 @@
+{
+  "database": {
+    "cassandra": {
+      "hostName": "127.0.0.1",
+      "keyspace": "message"
+    },
+    "mongo": {
+      "hostName": "mongodb://localhost:27017/designdb"
+    }
+  },
+  "sessionDatabase": {
+    "hostName": "localhost",
+    "portNumber": 27028
+  },
+  "appPort": 3000,
+  "localStorage": {
+    "name": "mNameSpace"
+  }
+}

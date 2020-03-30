@@ -8,15 +8,20 @@ const _ = require('lodash');
 const loggerService = require('../services/LoggingService');
 const userService = require('../services/userService');
 
-
+router.get('/', async function(req, res, next) {
+	res.send("login route");
+});
 
 router.post('/login', async function(req, res, next) {
 	let response = {};
 	try {
-		let email = req.body.email || "", pass = req.body.pass || "";
+		console.log(req.body);
 
+		let email = req.body.email || "", pass = req.body.pass || "";
+		//loggingService.getDefaultLogger().info('Reached Login route');
 		if(!_.isEmpty(email) && !_.isEmpty(pass)) {
 			let result = await userService.getUser(email, pass);
+			console.log(result);
 			if(result.success === false ) {
 				loggerService.getDefaultLogger().error('[ROUTE]-[USER]-ERROR: Query Failed at /user/login route: ');
 			} else {
@@ -37,5 +42,7 @@ router.post('/login', async function(req, res, next) {
 
 	res.send(response);
 });
+
+
 
 module.exports = router;
