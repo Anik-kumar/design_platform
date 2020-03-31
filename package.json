@@ -7,7 +7,9 @@
     "dev": "nodemon ./src/www.js",
     "start": "node ./src/www.js",
     "start-cluster": "nodemon ./src/wwwCluster.js",
-    "test": "nyc mocha --exit --opts ./test/www.js",
+    "test": "nyc --reporter=html --reporter=text mocha",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "test1": "nyc mocha --exit --opts ./test/www.js",
     "test-report": "nyc report",
     "debug": "nodemon --inspect ./src/www.js"
   },
@@ -16,6 +18,12 @@
   ],
   "author": "ANiK",
   "license": "ISC",
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
+  },
   "dependencies": {
     "body-parser": "^1.19.0",
     "config": "3.3.1",
@@ -36,8 +44,13 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
-    "nyc": "^15.0.0",
+    "coveralls": "^3.0.11",
+    "jest": "^25.2.4",
     "mocha": "^7.1.1",
-    "nodemon": "^2.0.2"
+    "mongodb-memory-server": "^6.5.0",
+    "nodemon": "^2.0.2",
+    "nyc": "^15.0.0",
+    "request": "^2.88.2",
+    "supertest": "^4.0.2"
   }
 }

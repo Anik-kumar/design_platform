@@ -70,3 +70,9 @@ $ yarn install
 * Local with nodemon - `yarn run dev`
 * Local - `yarn run start`
 * Debug - `yarn run debug`
+
+
+
+https://buddy.works/guides/how-automate-nodejs-unit-tests-with-mocha-chai
+https://istanbul.js.org/docs/tutorials/mocha/
+https://github.com/Danver97/user-service/blob/master/test/integration.test.js#L4

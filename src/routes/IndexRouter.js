@@ -4,7 +4,7 @@ const loggingService = require('../services/LoggingService');
 
 router.get('/', (req, res)=> {
     loggingService.getDefaultLogger().info('Reached Index route');
-    res.send("Welcome to HOme Page");
+    res.send("Welcome to Home Page");
 
 
 });
