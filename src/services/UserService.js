@@ -36,6 +36,34 @@ module.exports = class UserService {
 		}
 	}
 
+	/*
+  	*  @param email Email address of the user
+  	*  @param password Password of the user
+  	*  @return { Promise<{result: *, success: *}>}
+  	*
+  	* */
+	static async findUserByEmailAndPassword(email, password) {
+		let result, success = true, data;
+
+		try {
+			result = await userRepository.getUser(email, password);
+			if (result.success) {
+				data = result.data[0];
+			} else {
+				success = false;
+			}
+		} catch (e) {
+			console.log("Exception error in findUserByEmailAndPassword() in UserService. " + e);
+			next(e);
+		}
+
+		return {
+			success: success,
+			result: data
+		}
+
+	}
+
 	static async sigup(signup) {
 		let result = {}, success = true, token = '';
 		try {
@@ -44,7 +72,7 @@ module.exports = class UserService {
 			if (subscription.success) {
 				signup.subscription = subscription.data;
 			}
-			result = await userRepository.createUser(signup.subscription, signup.email, signup.password, signup.firstName, signup.lastName ); 
+			result = await userRepository.createUser(signup.subscription, signup.email, signup.password, signup.firstName, signup.lastName );
 			if (result.success) {
 				try {
 					let signedToken = await jwtService.sign({
@@ -54,7 +82,7 @@ module.exports = class UserService {
 				token = signedToken;
 				} catch(ex) {
 					loggerService.getDefaultLogger().error('[UserService]-ERROR: Exception on creating token: ' + JSON.stringify(ex));
-				}   
+				}
 			}
 		}catch (ex) {
 			loggerService.getDefaultLogger().error('[UserService]-ERROR: Exception at sigup(): ' + JSON.stringify(ex));
