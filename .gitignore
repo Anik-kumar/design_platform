@@ -11,6 +11,8 @@
 .DS_Store
 dist
 npm-debug.log
+package-lock.json
+error.log
 
 # IDEs and editors
 /.idea
