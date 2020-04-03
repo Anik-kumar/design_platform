@@ -6,7 +6,7 @@ const createError = require('http-errors');
 const _ = require('lodash');
 
 const loggerService = require('../services/LoggingService');
-const userService = require('../services/userService');
+const userService = require('../services/UserService');
 
 router.get('/', async function(req, res, next) {
 	res.send("login route");
