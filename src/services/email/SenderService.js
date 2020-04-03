@@ -17,3 +17,45 @@ https://help.sender.net/knowledgebase/id-like-to-use-the-api-is-there-anything-t
 }
 
  */
+
+module.exports = class SenderService {
+    constructor(props) {
+
+    }
+
+    /**
+     * Function to send email using SendGrid
+     *
+     * @param to
+     * @param subject
+     * @param content
+     * @param isText
+     * @param from
+     * @return {Promise<void>}
+     */
+    async static sendEmail(to, subject, content, isText, from) {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve("Success!");
+            } catch (ex) {
+                loggingService.getDefaultLogger().error('[SenderService]-ERROR: Exception at sendEmail(): ' + JSON.stringify(ex));
+                reject(ex);
+            }
+        });
+    }
+
+    /**
+     * Function to update email sent count
+     * @return {Promise<unknown>}
+     */
+    async static updateEmailCount() {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve('Success!');
+            } catch (ex) {
+                loggingService.getDefaultLogger().error('[SenderService]-ERROR: Exception at updateEmailCount(): ' + JSON.stringify(ex));
+                reject(ex);
+            }
+        });
+    }
+}
