@@ -19,7 +19,6 @@ This project is a REST api Micro Service.
 
 ## What is this?
 
-
 ## Technologies
 * [Node.js](http://nodejs.org)
 * [Express.js](https://expressjs.com/)
