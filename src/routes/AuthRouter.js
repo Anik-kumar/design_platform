@@ -3,7 +3,7 @@ const router = express.Router();
 const _ = require('lodash');
 
 const loggerService = require('../services/LoggingService');
-const userService = require('../services/userService');
+const userService = require('../services/UserService');
 const authService = require('../services/AuthService');
 
 router.get('/ink', (req, res, next) => {
