@@ -11,7 +11,7 @@ module.exports = class EmailService {
     static async sendEmail() {
 
         // select a mail service
-        
+
         return new Promise((resolve, reject) => {
             try {
                 const service = emailFactory.getEmailSenderService();

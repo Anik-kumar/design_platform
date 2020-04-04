@@ -7,13 +7,25 @@ const _ = require('lodash');
 
 const loggerService = require('../services/LoggingService');
 const userService = require('../services/UserService');
+let {ResUserModel} = require('../models/response/response.models');
 
 router.get('/', async function(req, res, next) {
 	res.send("login route");
 });
 
+/**
+ * This function to login user
+ * @route POST /login
+ * @group Authentication - Operations about user access
+ * @param {string} email.required - username or email - eg: user@domain
+ * @param {string} pass.required - user's password.
+ * @produces application/json
+ * @consumes application/json
+ * @returns {Response.UserModel} 200 - An array of user info
+ * @returns {Error}  default - Unexpected error
+ */
 router.post('/login', async function(req, res, next) {
-	let response = {};
+	let response = ResUserModel;
 	try {
 		console.log(req.body);
 
