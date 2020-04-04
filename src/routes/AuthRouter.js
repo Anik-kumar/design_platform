@@ -16,8 +16,6 @@ router.post('/ink', (req, res, next) => {
 
 	console.log(' This is auth routes /ink');
 
-
-
 });
 
 router.post('/login', async function(req, res, next) {
