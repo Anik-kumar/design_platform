@@ -7,6 +7,13 @@ const emailConfigService = require('../services/email/EmailConfigService');
 const emailCountService = require('../services/email/EmailCountService');
 const emailService = require('../services/email/EmailService');
 
+/**
+ * This API retrieves all email sender's configurations
+ * @route GET /config
+ * @group Email Configuration - Operations about email config
+ * @returns {object} 200 - An array of configurations
+ * @returns {Error}  default - Unexpected error
+ */
 router.get('/config', async (req, res, next) => {
     let response = {};
     try {
@@ -23,6 +30,13 @@ router.get('/config', async (req, res, next) => {
     res.send(response);
 });
 
+/**
+ * This API retrieves the number of emails sent by all services
+ * @route GET /count
+ * @group Email Count - Operations about email count
+ * @returns {object} 200 - An array of configurations
+ * @returns {Error}  default - Unexpected error
+ */
 router.get('/count', async (req, res, next) => {
     let response = {};
     try {
@@ -39,6 +53,13 @@ router.get('/count', async (req, res, next) => {
     res.send(response);
 });
 
+/**
+ * This API retrieves the number of emails sent by all services today
+ * @route GET /count/today
+ * @group Email Count - Operations about email count
+ * @returns {object} 200 - An array of configurations
+ * @returns {Error}  default - Unexpected error
+ */
 router.get('/count/today', async (req, res, next) => {
     let response = {};
     try {
@@ -56,6 +77,14 @@ router.get('/count/today', async (req, res, next) => {
 });
 
 
+/**
+ * This API updates email sent count
+ * @route POST /count/today
+ * @group Email Count - Operations about email count
+ * @param {string} service.query.required - email sending service provider name
+ * @returns {object} 200 - An array of configurations
+ * @returns {Error}  default - Unexpected error
+ */
 router.post('/update_count', async (req, res, next) => {
     let response = {};
     try {

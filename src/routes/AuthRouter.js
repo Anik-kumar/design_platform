@@ -4,7 +4,7 @@ const _ = require('lodash');
 
 const Joi = require('@hapi/joi');
 const oldJoi = require('joi');
- 
+
 
 
 const loggerService = require('../services/LoggingService');
@@ -19,6 +19,7 @@ router.post('/ink', (req, res, next) => {
 
 
 });
+
 
 router.post('/login', async function(req, res, next) {
 	let response = {};
@@ -51,15 +52,15 @@ router.post('/login', async function(req, res, next) {
 		if(error) {
 			console.log("Joi Validation Error ,", error);
 		}
-		
+
 		//schema.validate({'email': 'pijus'});
 		// try {
 		// 	const value = await schema.validateAsync({ email: 'pijus'});
-			
 
-			
+
+
 		// }
-		// catch (err) { 
+		// catch (err) {
 			// console.log('JOI Error: ', err);
 			// console.log('JOI errors: ', value.errors);
 			// console.log('JOI error: ', value.error);
@@ -115,10 +116,10 @@ router.post('/registration', async function(req, res, next) {
 		const gender = req.body.gender;
 		const dob = req.body.dob;
 
-		
+
 		// const address = req.body.address;
 
-		// if( a=b || c=d) 
+		// if( a=b || c=d)
 		// if( a=b && c=d)
 		let errors = [];
 		if (_.isNil(email)) {
@@ -141,7 +142,7 @@ router.post('/registration', async function(req, res, next) {
 				phone: String,
 				gender: String,
 				dob: Date,
-				
+
 
 			}
 
