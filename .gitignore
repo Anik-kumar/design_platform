@@ -12,6 +12,7 @@ package-lock.*
 
 .env
 .DS_Store
+.nyc_output
 dist
 npm-debug.log
 
