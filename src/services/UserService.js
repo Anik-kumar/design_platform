@@ -67,22 +67,26 @@ module.exports = class UserService {
 	static async sigup(signup) {
 		let result = {}, success = true, token = '';
 		try {
-			let subscription = await subscriptionService.getSubscriptionByCode(signup.subscription);
-			console.log('subscription: ', subscription);
-			if (subscription.success) {
-				signup.subscription = subscription.data;
-			}
-			result = await userRepository.createUser(signup.subscription, signup.email, signup.password, signup.firstName, signup.lastName );
+			// let subscription = await subscriptionService.getSubscriptionByCode(signup.subscription);
+			// console.log('subscription: ', subscription);
+			// if (subscription.success) {
+			// 	signup.subscription = subscription.data;
+			// }
+			
+			result = await userRepository.createUser(signup.email, signup.password, signup.firstName, signup.lastName, signup.phone, signup.gender, signup.dob);
 			if (result.success) {
-				try {
-					let signedToken = await jwtService.sign({
-						email: result.data.email,
-						pass: result.data.pass
-					});
-				token = signedToken;
-				} catch(ex) {
-					loggerService.getDefaultLogger().error('[UserService]-ERROR: Exception on creating token: ' + JSON.stringify(ex));
-				}
+				// try {
+				// 	let signedToken = await jwtService.sign({
+				// 		email: result.data.email,
+				// 		pass: result.data.pass
+				// 	});
+				// token = signedToken;
+				// } catch(ex) {
+				// 	loggerService.getDefaultLogger().error('[UserService]-ERROR: Exception on creating token: ' + JSON.stringify(ex));
+				// }
+
+				console.log('Registration Successful');
+
 			}
 		}catch (ex) {
 			loggerService.getDefaultLogger().error('[UserService]-ERROR: Exception at sigup(): ' + JSON.stringify(ex));
@@ -90,7 +94,7 @@ module.exports = class UserService {
 		}
 
 		return {
-			data: result,
+			data: result.data,
 			token: token,
 			success: success
 		}

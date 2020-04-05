@@ -6,12 +6,15 @@
 
 # dependencies
 /node_modules
+package-lock.json
+package-lock.*
+
 
 .env
 .DS_Store
 dist
 npm-debug.log
-package-lock.json
+
 error.log
 
 # IDEs and editors
@@ -24,11 +27,7 @@ error.log
 *.sublime-workspace
 
 # IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.vscode
 
 # misc
 /.sass-cache
