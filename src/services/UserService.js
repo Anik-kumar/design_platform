@@ -15,7 +15,7 @@ module.exports = class UserService {
 		try {
 			result = await userRepository.getUser(email, pass);
 			console.log('result: ', result);
-			if (result.success) {
+			if (result.success && result.data != null && result.data.length > 0) {
 				let signedToken = await jwtService.sign({
 					email: result.data[0].email,
 					pass: result.data[0].pass
@@ -23,6 +23,10 @@ module.exports = class UserService {
 
 				console.log('token>> ', signedToken);
 				token = signedToken;
+				result = result.data[0];
+			} else {
+				result = {};
+				success = false;
 			}
 		} catch (ex) {
 			loggerService.getDefaultLogger().error('[UserService]-ERROR: Exception at getUser(): ' + JSON.stringify(ex));
@@ -30,7 +34,7 @@ module.exports = class UserService {
 		}
 
 		return {
-			data: result.data[0],
+			data: result,
 			token: token,
 			success: success
 		}
