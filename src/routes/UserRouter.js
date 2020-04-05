@@ -32,10 +32,15 @@ router.post('/login', async function(req, res, next) {
 		let email = req.body.email || "", pass = req.body.pass || "";
 		//loggingService.getDefaultLogger().info('Reached Login route');
 		if(!_.isEmpty(email) && !_.isEmpty(pass)) {
+
 			let result = await userService.getUser(email, pass);
-			console.log(result);
 			if(result.success === false ) {
 				loggerService.getDefaultLogger().error('[ROUTE]-[USER]-ERROR: Query Failed at /user/login route: ');
+				response = {
+					"error": true,
+					"message": "Username/Password is wrong"
+				}
+				
 			} else {
 				response = {
 					name: result.data.name,
@@ -44,12 +49,22 @@ router.post('/login', async function(req, res, next) {
 					token: result.token
 				}
 			}
+			res.status(200);
 		} else {
-			response = {};
+			response = {
+				"error": true,
+				"message": "Username or Password is empty"
+			};
+			res.status(400);
 		}
 
 	} catch (ex) {
 		loggerService.getDefaultLogger().error('[ROUTE]-[INDEX]-ERROR: Exception get request at /user/login route: ' + JSON.stringify(ex));
+		response = {
+			"error": true,
+			"message": "Can't able to Login. Please try again"
+		};
+		res.status(400);
 	}
 
 	res.send(response);
