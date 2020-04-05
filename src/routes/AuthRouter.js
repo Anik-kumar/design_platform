@@ -10,7 +10,6 @@ const oldJoi = require('joi');
 const loggerService = require('../services/LoggingService');
 const userService = require('../services/UserService');
 const authService = require('../services/AuthService');
-const regService = require('../services/RegisterService');
 
 router.post('/ink', (req, res, next) => {
 
@@ -103,55 +102,40 @@ router.post('/login', async function(req, res, next) {
 
 router.post('/registration', async function(req, res, next) {
 	let response = {};
+	
+	const regSchema = Joi.object({
+		email: Joi.string().trim().email().required(),
+		firstName: Joi.string().trim().min(3).max(20).required(),
+		lastName: Joi.string().trim().min(3).max(20).required(),
+		pass: Joi.string().trim().min(3).required(),
+		phone: Joi.string().trim().min(3).required(),
+		gender: Joi.string().trim().required(),
+		dob: Joi.date().required()
+	});
 	try{
-		console.log(req.body);
-		const email = req.body.email;
-		const firstName = req.body.name.first;
-		const lastName = req.body.name.last;
-		const pass = req.body.pass;
-		const phone = req.body.phone;
-		const gender = req.body.gender;
-		const dob = req.body.dob;
-
-		
-		// const address = req.body.address;
-
-		// if( a=b || c=d) 
-		// if( a=b && c=d)
-		let errors = [];
-		if (_.isNil(email)) {
-			errors.push('Email validation failed');
+		await regSchema.validateAsync(req.body);
+		result = await userService.sigup(req.body);
+		if(result.success) {
+			response = result.data;
 		}
-
-		if (_.isNil(firstName)) {
-			errors.push('FirstName validation failed');
-		}
-
-		if(!_.isEmpty(email) || !_.isEmpty(firstName) || !_.isEmpty(lastName) || !_.isEmpty(pass) || !_.isEmpty(phone) || !_.isEmpty(gender) || !_.isEmpty(dob)) {
-
-			const user = {
-				email: String,
-				name: {
-					first: String,
-					last: String
-				},
-				pass: String,
-				phone: String,
-				gender: String,
-				dob: Date,
-				
-
-			}
-
-
-
-		}
-
+		res.status(200);
 	}catch(err) {
 		console.error(err);
-
+		response = {
+			"error": true,
+			"message": err.message
+		}
+		res.status(400);
 	}
 
+
+	// if(result.success) {
+	// 	console.log("Data Retrived");
+	// 	console.log("Token => ", result.token);
+	// 	console.log("Data => ", result.data);
+	// }
+
+	res.send(response);
 });
 
 

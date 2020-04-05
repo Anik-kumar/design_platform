@@ -110,4 +110,4 @@ var UserModel = {
 	last_login: Date
 };
 
-module.exports = UserModel
+module.exports = UserModel;
