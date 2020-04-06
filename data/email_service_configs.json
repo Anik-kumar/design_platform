@@ -1,0 +1,32 @@
+[{
+    "service_name" : "SENDINBLUE1",
+    "daily_limit" : 300,
+    "monthly_limit" : 9000,
+    "api_key" : "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",
+    "api_url" : "https://api.sendinblue.com/v3/smtp/email",
+    "priority" : 1
+},
+{
+    "service_name" : "SENDINBLUE2",
+    "daily_limit" : 300,
+    "monthly_limit" : 9000,
+    "api_key" : "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",
+    "api_url" : "https://api.sendinblue.com/v3/smtp/email",
+    "priority" : 3
+},
+{
+    "service_name" : "SENDGRID1",
+    "daily_limit" : 100,
+    "monthly_limit" : 3000,
+    "api_key" : "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",
+    "api_url" : "",
+    "priority" : 2
+},
+{
+    "service_name" : "SENDGRID2",
+    "daily_limit" : 100,
+    "monthly_limit" : 3000,
+    "api_key" : "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",
+    "api_url" : "",
+    "priority" : 4
+}]
