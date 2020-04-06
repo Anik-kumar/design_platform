@@ -1,17 +1,6 @@
-
-// using Twilio SendGrid's v3 Node.js Library
-
-// https://github.com/sendgrid/sendgrid-nodejs
-// const sgMail = require('@sendgrid/mail');
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-// const msg = {
-//     to: 'test@example.com',
-//     from: 'test@example.com',
-//     subject: 'Sending with Twilio SendGrid is Fun',
-//     text: 'and easy to do anywhere, even with Node.js',
-//     html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-// };
-// sgMail.send(msg);
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey('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');
+// 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
 
 // SUBSCRIBER LIMIT MONTHLY SEND LIMIT  DAILY SEND LIMIT
 // Unlimited	    3,000	            100
@@ -30,16 +19,21 @@ module.exports = class SendGridService {
      * @param from
      * @return {Promise<void>}
      */
-    async static sendEmail(to, subject, content, isText, from) {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve("Success!");
-            } catch (ex) {
-                loggingService.getDefaultLogger().error('[SendGridService]-ERROR: Exception at sendEmail(): ' + JSON.stringify(ex));
-                reject(ex);
-            }
-
-        })
+    static async sendEmail(apiKey, to, from, subject, content, isText, name) {
+        let result = null;
+        sgMail.setApiKey(apiKey);
+        try {
+            const msg = {
+                to: to,
+                from: from,
+                subject: subject,
+                html: content
+            };
+            result = await sgMail.send(msg);
+        } catch (ex) {
+            loggingService.getDefaultLogger().error('[SendGridService]-ERROR: Exception at sendEmail(): ' + (ex.message || ''));
+        }
+       return result;
     }
 
 
@@ -47,7 +41,7 @@ module.exports = class SendGridService {
      * Function to update email sent count
      * @return {Promise<unknown>}
      */
-    async static updateEmailCount() {
+    static async updateEmailCount() {
         return new Promise((resolve, reject) => {
             try {
                 resolve('Success!');

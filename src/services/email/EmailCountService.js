@@ -30,7 +30,7 @@ module.exports = class EmailCountService {
         }
     }
     static async getTodaysEmailCount() {
-        let result = {}, success = true;
+        let result = [], success = true;
         try {
             let d = new Date();
             let today = d.getDate().toString().padStart(2, '0') + '-' + (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getFullYear().toString();
@@ -85,6 +85,28 @@ module.exports = class EmailCountService {
         }
     }
 
+    /**
+     * Function to insert documents in Email Count colletion
+     * @param {*} documents 
+     * @return {Promise<{data: *, success: *}>}
+     */
+    static async insertMany(documents) {
+        let result = {}, success = true;
+        try {
+            let counts = await emailCountRepository.insertMany(documents);
+            if (counts.success) {
+                result = counts.data;
+            }
+        } catch (ex) {
+            loggerService.getDefaultLogger().error('[EmailCountService]-ERROR: Exception at insertMany(): ' + (ex.message || ''));
+            success = false;
+        }
+
+        return {
+            data: result,
+            success: success
+        }
+    }
     static async updateEmailCountByService(service_name) {
         let result = {}, success = true;
         try {

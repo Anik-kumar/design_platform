@@ -40,8 +40,11 @@ module.exports = class EmailConfigService {
         try {
             result = await emailServiceConfigRepository.getConfig(service_name);
             console.log('result: ', result);
+            if (result.success == true && result.data != null && result.data.length>0) {
+                result = result.data[0];
+            }
         } catch (ex) {
-            loggerService.getDefaultLogger().error('[EmailConfigService]-ERROR: Exception at getConfig(): ' + JSON.stringify(ex));
+            loggerService.getDefaultLogger().error('[EmailConfigService]-ERROR: Exception at getConfig(): ' + ex.message);
             success = false;
         }
 

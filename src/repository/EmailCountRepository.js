@@ -91,8 +91,26 @@ module.exports = class EmailCountRepository {
         }
     }
 
+    /**
+     * Function to insert many documents in email_count collection
+     * @param {object} documents - Email Count list 
+     * @return {Promise<{data: *, success: *}>}
+     */
+    static async insertMany(documents) {
+        let result = {}, success = true;
+        try {
+            result = await EmailCounts.insertMany(documents).exec();
+        } catch (ex) {
+            loggerService.getDefaultLogger().error('[EmailCountRepository]-ERROR: Exception at insertMany(): ' + ex.message);
+            console.log(ex);
+            success = false;
+        }
 
-
+        return {
+            data: result,
+            success: success
+        }
+    }
 
     /**
      *
