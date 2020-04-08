@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const _ = require('lodash');
+const Joi = require('@hapi/joi');
 
 const loggerService = require('../services/LoggingService');
 const emailConfigService = require('../services/email/EmailConfigService');
 const emailCountService = require('../services/email/EmailCountService');
 const emailService = require('../services/email/EmailService');
+const sendinBlueService = require('../services/email/SendinBlueService');
+
 
 /**
  * This API retrieves all email sender's configurations
@@ -105,17 +108,27 @@ router.post('/update_count', async (req, res, next) => {
 router.post('/send', async (req, res, next) => {
     let response = {};
     try {
-        let emailTo = req.body.to || "";
-        let from = req.body.from || "info@pijus.me";
-        let content = req.body.content;
+        const emailSchema = Joi.object({
+            to: Joi.string().trim().email().required(),
+            name: Joi.string().trim().required(),
+            content: Joi.string().trim().required(),
+            subject: Joi.string().trim().required(),
+        });
 
-        let result = await emailCountService.updateEmailCountByService(service);
-        if(result.success === false ) {
-            loggerService.getDefaultLogger().error('[ROUTE]-[USER]-ERROR: Query Failed at /email/count route: ');
-        } else {
-            response = result.data;
+        try{
+            await emailSchema.validateAsync(req.body);
+            response = await emailService.prepareToSendEmail(req.body.to, req.body.subject, req.body.content, req.body.name);
+            
+            let emailsToday = await emailCountService.getTodaysEmailCount();
+            res.status(200);
+        }catch(err) {
+            console.error(err);
+            response = {
+                "error": true,
+                "message": err.message
+            }
+            res.status(400);
         }
-
     } catch (ex) {
         loggerService.getDefaultLogger().error('[ROUTE]-[INDEX]-ERROR: Exception get request at /email/count route: ' + JSON.stringify(ex));
     }
@@ -123,6 +136,31 @@ router.post('/send', async (req, res, next) => {
 });
 
 
+router.post('/sendsib', async (req, res, next) => {
+    let response = {};
+    try {
+        const emailSchema = Joi.object({
+            to: Joi.string().trim().email().required(),
+            name: Joi.string().trim().required(),
+            content: Joi.string().trim().required(),
+            subject: Joi.string().trim().required(),
+        });
 
-
+        try{
+            await emailSchema.validateAsync(req.body);
+            response = await sendinBlueService.sendEmail(req.body.to, req.body.subject, req.body.content, req.body.name);
+            res.status(200);
+        }catch(err) {
+            console.error(err);
+            response = {
+                "error": true,
+                "message": err.message
+            }
+            res.status(400);
+        }
+    } catch (ex) {
+        loggerService.getDefaultLogger().error('[ROUTE]-[INDEX]-ERROR: Exception get request at /email/sendsib route: ' + (ex.message || ''));
+    }
+    res.send(response);
+});
 module.exports = router;

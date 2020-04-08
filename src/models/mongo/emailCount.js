@@ -7,6 +7,7 @@ const schema = new mongoose.Schema({
     total_sent: { type: Number, required: true},
     daily_limit: Number,
     monthly_limit: Number,
+    priority: Number,
     updatedAt: String
 });
 

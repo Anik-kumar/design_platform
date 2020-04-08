@@ -7,7 +7,9 @@ const schema = new mongoose.Schema({
     service_name: { type: String, index: true },
     daily_limit: Number,
     monthly_limit: Number,
-    api_key: String
+    api_key: String,
+    api_url: String,
+    priority: Number
 });
 
 module.exports = mongoose.model('email_service_config', schema);

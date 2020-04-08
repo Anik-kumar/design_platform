@@ -1,0 +1,40 @@
+[{
+    "date" : "06-04-2020",
+    "service_name" : "SENDINBLUE1",
+    "total_sent" : 2,
+    "daily_limit" : 300,
+    "monthly_limit" : 9000,
+    "priority" : 1,
+    "updatedAt" : "2020-04-06T09:09:49.919Z",
+    "__v" : 0
+},
+{
+    "date" : "06-04-2020",
+    "service_name" : "SENDINBLUE2",
+    "total_sent" : 0,
+    "daily_limit" : 300,
+    "monthly_limit" : 9000,
+    "priority" : 3,
+    "updatedAt" : "Mon Apr 06 2020 14:57:54 GMT+0600 (Bangladesh Standard Time)",
+    "__v" : 0
+},
+{
+    "date" : "06-04-2020",
+    "service_name" : "SENDGRID1",
+    "total_sent" : 0,
+    "daily_limit" : 100,
+    "monthly_limit" : 3000,
+    "priority" : 2,
+    "updatedAt" : "Mon Apr 06 2020 14:57:54 GMT+0600 (Bangladesh Standard Time)",
+    "__v" : 0
+},
+{
+    "date" : "06-04-2020",
+    "service_name" : "SENDGRID2",
+    "total_sent" : 0,
+    "daily_limit" : 100,
+    "monthly_limit" : 3000,
+    "priority" : 4,
+    "updatedAt" : "Mon Apr 06 2020 14:57:54 GMT+0600 (Bangladesh Standard Time)",
+    "__v" : 0
+}]
