@@ -27,7 +27,7 @@ var UserModel = {
 	verification: {
 		email: {
 			verified: Boolean,
-			code: String
+			code: []
 		},
 		phone: {
 			verified: Boolean,

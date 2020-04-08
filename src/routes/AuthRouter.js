@@ -1,15 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const _ = require('lodash');
+const fs = require('fs');
 
 const Joi = require('@hapi/joi');
 const oldJoi = require('joi');
 
 
 
+const jwtService = require('../services/JwtService');
 const loggerService = require('../services/LoggingService');
 const userService = require('../services/UserService');
 const authService = require('../services/AuthService');
+const emailService = require('../services/email/EmailService');
 
 router.post('/ink', (req, res, next) => {
 
@@ -50,22 +53,6 @@ router.post('/login', async function(req, res, next) {
 			console.log("Joi Validation Error ,", error);
 		}
 
-		//schema.validate({'email': 'pijus'});
-		// try {
-		// 	const value = await schema.validateAsync({ email: 'pijus'});
-
-
-
-		// }
-		// catch (err) {
-			// console.log('JOI Error: ', err);
-			// console.log('JOI errors: ', value.errors);
-			// console.log('JOI error: ', value.error);
-
-		// 	console.log('JOI error messaage: ', err.message + ' > ' + err.name);
-		// }
-
-		// Joi.validate();
 
 		if(!_.isEmpty(email) && !_.isEmpty(pass)) {
 			let result = await userService.findUserByEmailAndPassword(email, pass);
@@ -101,7 +88,7 @@ router.post('/login', async function(req, res, next) {
 
 
 
-router.post('/registration', async function(req, res, next) {
+router.post('/signup', async function(req, res, next) {
 	let response = {};
 	
 	const regSchema = Joi.object({
@@ -113,8 +100,42 @@ router.post('/registration', async function(req, res, next) {
 		gender: Joi.string().trim().required(),
 		dob: Joi.date().required()
 	});
+
 	try{
+		// form data validation
 		await regSchema.validateAsync(req.body);
+
+		// generating verification email template
+		try {
+			let tmpEmail = req.body.email;
+			let tmpName = req.body.firstName + " " + req.body.lastName;
+			let emailVerifyToken = await jwtService.sign({'email': tmpEmail}, {'':1*60*60});
+			let link = "http://localhost:4200/auth/email-verified?lang=en&token=";
+			if (emailVerifyToken.auth == true) {
+				link += emailVerifyToken.token;
+			}
+			console.log(link);
+
+			let content = await fs.readFile('./src/email/signup-email.html', 'utf8', (err, data) => {
+				if(err) {
+					return console.log("File Reading Error " , err);
+				}
+				//let result = data.replace('[CONFIRM_URL]', link);
+				let result = data.replace(/CONFIRM_URL/g, link);
+				result = result.replace(/USER_NAME/g, tmpName);
+
+					// sending verification email
+				emailService.prepareToSendEmail(req.body.email, 'Welcome To Design Platform',result, 'Design Platform');
+			});
+		} catch(err) {
+			console.log(err);
+		}
+		
+		
+		
+	
+
+		// registering user
 		result = await userService.sigup(req.body);
 		if(result.success) {
 			response = result.data;
