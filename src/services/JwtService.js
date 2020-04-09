@@ -83,4 +83,75 @@ module.exports =  class JwtService {
 	}
 
 
+	static async signHS256(data, options) {
+		return new Promise ((resolve, reject) => {
+			try {
+				let sOptions = options;
+				let expiresIn = options['expiresIn'] || 960;
+				if (_.isNil(sOptions) || _.isEmpty(sOptions)) {
+					sOptions = {
+						issuer: "pijus.me",
+						subject: "admin@pijus.me",
+						audience: "Client_Identity" // this should be provided by client
+					}
+				}
+					// Token signing options
+				var signOptions = {
+					issuer:  sOptions.issuer,
+					subject:  sOptions.subject,
+					audience:  sOptions.audience,
+					expiresIn:  expiresIn,    // 30 days validity
+					algorithm:  "RS256"
+				};
+				//var token = jwt.sign(payload, privateKEY, signOptions);
+				var token = jwt.sign(data, privateKEY, {
+					issuer: "pijus.me",
+					subject: "admin@pijus.me",
+					audience:  'Client_Identity',
+					expiresIn:  expiresIn,
+					algorithm:  "HS256"
+				});
+
+				resolve({
+					auth: true,
+					token: token
+				})
+			} catch (ex) {
+				loggingService.getDefaultLogger().error('[JwtService]-ERROR: Exception at sign(): ' + JSON.stringify(ex));
+				reject(ex);
+			}
+		});
+	}
+
+
+	static async verifyHS256(token, options) {
+		return new Promise ((resolve, reject) => {
+			try {
+				
+				var verifyOptions = {
+					issuer: "pijus.me",
+					subject: "admin@pijus.me",
+					audience:  'Client_Identity',
+					expiresIn:  options['expiresIn'] || 960,
+					algorithm:  ["HS256"]
+				};
+
+				var verifiedToken = jwt.verify(token, privateKEY, verifyOptions,  (err, decoded) => {
+					if(err) {
+						loggingService.getDefaultLogger().error('[JwtService]-ERROR: Error at verify(): ' + JSON.stringify(err));
+						reject(err);
+					}
+					resolve({
+						data: decoded,
+						token: token
+					});
+				});
+			} catch (ex) {
+				loggingService.getDefaultLogger().error('[JwtService]-ERROR: Exception at sign(): ' + JSON.stringify(ex));
+				reject(ex);
+			}
+		});
+	}
+
+
 };

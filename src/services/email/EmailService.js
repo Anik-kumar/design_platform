@@ -63,7 +63,7 @@ module.exports = class EmailService {
                             break;
                         }
                     }
-                    sender = 'SENDGRID2';
+                    sender = 'SENDGRID1';
                     response = await EmailService.sendEmail(sender, to, name, subject, content);
                 } else {
                     let result = await emailConfigService.getAllConfig();
