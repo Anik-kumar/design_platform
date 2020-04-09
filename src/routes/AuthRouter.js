@@ -109,8 +109,8 @@ router.post('/signup', async function(req, res, next) {
 		try {
 			let tmpEmail = req.body.email;
 			let tmpName = req.body.firstName + " " + req.body.lastName;
-			let emailVerifyToken = await jwtService.sign({'email': tmpEmail}, {'':1*60*60});
-			let link = "http://localhost:4200/auth/email-verified?lang=en&token=";
+			let emailVerifyToken = await jwtService.signHS256({'email': tmpEmail}, {'expiresIn': 10*60});
+			let link = "http://localhost:4200/verifyEmail?lang=en&token=";
 			if (emailVerifyToken.auth == true) {
 				link += emailVerifyToken.token;
 			}
@@ -120,7 +120,7 @@ router.post('/signup', async function(req, res, next) {
 				if(err) {
 					return console.log("File Reading Error " , err);
 				}
-				//let result = data.replace('[CONFIRM_URL]', link);
+				
 				let result = data.replace(/CONFIRM_URL/g, link);
 				result = result.replace(/USER_NAME/g, tmpName);
 
@@ -131,9 +131,6 @@ router.post('/signup', async function(req, res, next) {
 			console.log(err);
 		}
 		
-		
-		
-	
 
 		// registering user
 		result = await userService.sigup(req.body);
@@ -160,36 +157,20 @@ router.post('/signup', async function(req, res, next) {
 	res.send(response);
 });
 
+router.post('/verifyEmail', async function(req, res, next) {
+	let response = {};
+	console.log(req.body.token);
 
-// router.post('/login', async function(req, res, next) {
-// 	let response = {};
-// 	try {
-// 		console.log(req.body);
-// 		let email = req.body.email || "", pass = req.body.pass || "";
-// 		//loggingService.getDefaultLogger().info('Reached Login route');
-// 		if(!_.isEmpty(email) && !_.isEmpty(pass)) {
-// 			let result = await userService.getUser(email, pass);
-// 			console.log(result);
-// 			if(result.success === false ) {
-// 				loggerService.getDefaultLogger().error('[ROUTE]-[USER]-ERROR: Query Failed at /auth/login route: ');
-// 			} else {
-// 				response = {
-// 					name: result.data.name,
-// 					email: result.data.email,
-// 					lastLogin: result.data.lastLogin,
-// 					token: result.token
-// 				}
-// 			}
-// 		} else {
-// 			response = {};
-// 		}
-//
-// 	} catch (ex) {
-// 		console.log(ex);
-// 		loggerService.getDefaultLogger().error('[ROUTE]-[INDEX]-ERROR: Exception get request at /auth/login route: ' + JSON.stringify(ex));
-// 	}
-//
-// 	res.send(response);
-// });
+	const result = await jwtService.verifyHS256(req.body.token, { 'expiresIn' : 10*60 });
+	console.log("AuthRoute +> ", result);
+
+	// response.Error = "";
+	// response.Data = req.body;
+	response = result;
+	res.status(200);
+
+	res.send(response);
+
+})
 
 module.exports = router;
