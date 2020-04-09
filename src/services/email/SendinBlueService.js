@@ -2,20 +2,17 @@ const _ = require('lodash');
 const loggingService = require('../LoggingService');
 var rp = require('request-promise');
 const SIB_API = 'https://api.sendinblue.com/v3/smtp/email';
-const SIB_API_KEY = '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';
-const SIB_API_KEY2 = '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';
+const SIB_API_KEY = '';
+const SIB_API_KEY2 = '';
 
-// https://developers.sendinblue.com/reference#sendtransacemail
-// v3 API Key: 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
-//
 
-// https://www.npmjs.com/package/sib-api-v3-sdk
+
 
 /*
 curl --request POST \
     --url https://api.sendinblue.com/v3/smtp/email \
     --header 'accept: application/json' \
-    --header 'api-key: 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' \
+    --header 'api-key: ' \
     --header 'content-type: application/json' \
     --data '{"sender":{"name":"Pijus Kumar","email":"pijus.temp@gmail.com"},"to":[{"email":"pijus.sarker@gmail.com","name":"Kumar"}],"textContent":"Hi Pijus, This is a test message 2. Please discard.","subject":"Email testing 2"}'
 */
