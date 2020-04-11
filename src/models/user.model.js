@@ -27,16 +27,14 @@ var UserModel = {
 	verification: {
 		email: {
 			verified: Boolean,
-			code: []
+			email_sent: Boolean
 		},
 		phone: {
 			verified: Boolean,
-			code: String
+			code_sent: Boolean,
+			codes: []
 		},
-		reset_pass: {
-			verified: Boolean,
-			code: String
-		}
+		is_reset_pass_active: Boolean
 	},
 	social_profiles: {
 		fb: {
