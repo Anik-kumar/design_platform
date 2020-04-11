@@ -103,4 +103,50 @@ module.exports = class UserService {
 			success: success
 		}
 	}
+  
+  
+  static async verifyUserEmail(userEmail) {
+    let result; 
+    let found = true;
+		let err = '';
+		let updateUser;
+    
+    try{
+      result = await userRepository.findOne({'email': userEmail, 'verification.email.email_sent': true});
+			
+			
+      if(result.success) {
+				
+				updateUser = await userRepository.updateOne({
+					'email': userEmail, 
+					'verification.email.email_sent': true
+				}, {
+					'verification.email.verified': true, 
+					'verification.email.email_sent': false
+				});
+
+				if(updateUser.success) {
+					found = true;
+					console.log('UserService>>  User verify status updated');
+				}else {
+					found = false;
+					console.log('UserService>>  User verify status update failed');
+				}
+      }else {
+				found = false;
+				console.log('UserService>>  User not found');
+      }
+    } catch (e) {
+      console.log("Exception error in verifyUserEmail() in UserService. " + e);
+      found = false;
+			err = e;
+    }
+    
+    return {
+      error: err,
+      success: found
+    }
+    
+  }
+  
 };

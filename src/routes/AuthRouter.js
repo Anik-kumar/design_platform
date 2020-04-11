@@ -161,15 +161,44 @@ router.post('/verifyEmail', async function(req, res, next) {
 	let response = {};
 	console.log(req.body.token);
 
-	const result = await jwtService.verifyHS256(req.body.token, { 'expiresIn' : 10*60 });
+	const result = await jwtService.verifyHS256(req.body.token, { 'expiresIn' : 20*60 });
 	console.log("AuthRoute +> ", result);
+  
+  const userMail = result.data.email;
+  
+  let isFound = await userService.verifyUserEmail(result.data.email);
+  
+  console.log("---> AuthRouter => ", isFound);
+  
+  if(isFound.success) {
+    response.message = "User email found";
+    response.success = true;
+    response.error = isFound.error;
+  } else {
+    response.message = "User email not found";
+    response.success = false;
+    response.error = isFound.error;
+  }
 
 	// response.Error = "";
 	// response.Data = req.body;
-	response = result;
-	res.status(200);
+//	response = result;
+  res.status(200);
+  
+//  {data: {…}, token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6I…1lIn0.1IuxjLfEdp9XH-43RfD0nE2ak6Oz7gbnp-o_MZ800Wk"}
+//{ data: {
+//    email: "anik.kumar.sarker@gmail.com"
+//    iat: 1586534375
+//    exp: 1586534975
+//    aud: "Client_Identity"
+//    iss: "pijus.me"
+//    sub: "admin@pijus.me"
+//    }
+//  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFuaWsua3VtYXIuc2Fya2VyQGdtYWlsLmNvbSIsImlhdCI6MTU4NjUzNDM3NSwiZXhwIjoxNTg2NTM0OTc1LCJhdWQiOiJDbGllbnRfSWRlbnRpdHkiLCJpc3MiOiJwaWp1cy5tZSIsInN1YiI6ImFkbWluQHBpanVzLm1lIn0.1IuxjLfEdp9XH-43RfD0nE2ak6Oz7gbnp-o_MZ800Wk"
 
-	res.send(response);
+
+  console.log("---> AuthRouter => ", response);
+  res.send(response);
 
 })
 
