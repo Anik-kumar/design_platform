@@ -26,57 +26,67 @@ router.post('/login', async function(req, res, next) {
 	try {
 		//console.log(req.body);
 		let email = req.body.email || "", pass = req.body.pass || "";
-		const schema = Joi.object({
-			email: Joi.string()
-			.email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-			.error((errors) => {
-        return errors.map(error => {
-          switch (error.code) {
-            case "string.email":
-              return new Error('Email address is not valid');
-            case "any.empty":
-              return new Error('Email address empty');
-          }
-        })
+		
+
+		const schemaEmail = Joi.object({
+			email: Joi.string().email().required().messages({
+				"string.email" : `"email" format is not valid`,
+				"any.required" : `"email" field is required`
+			})
+		});
+		const schemaPass = Joi.object({
+			pass: Joi.string().min(10).required().messages({
+				"string.min" : `"password" must be at least 6 charaters`,
+				"any.required" : `"password" field is required`
 			})
 		});
 
-		const schema2 = Joi.object().keys({
-			email: Joi.string().email(),
-			name: Joi.string().min(10).required()
-		});
-
-		const {error} = oldJoi.validate({'email': 'pijusds', 'name': 'sa'}, schema2);
+		const errorEmail = schemaEmail.validate({'email': email});
+		const errorPass = schemaPass.validate({'pass': pass});
 
 
-		if(error) {
-			console.log("Joi Validation Error ,", error);
-		}
+		// if(errorEmail.length > 5 || errorPass.length > 5) {
+		// 	console.log("Joi Validation Error Email ,", errorEmail.error);
+		// 	console.log("Joi Validation Error Password ,", errorPass.error);
+		// 	response = {
+		// 		"error": true,
+		// 		"message": "Please Enter Valid Email or Password"
+		// 	};
+			
+		// } else {
 
-
-		if(!_.isEmpty(email) && !_.isEmpty(pass)) {
-			let result = await userService.findUserByEmailAndPassword(email, pass);
-			if(result.success === false ) {
-				loggerService.getDefaultLogger().error('[ROUTE]-[USER]-ERROR: Query Failed at /auth/login route: ');
+			if(!_.isEmpty(email) && !_.isEmpty(pass)) {
+				let result = await userService.findUserByEmailAndPassword(email, pass);
+				if(result.success === false ) {
+					loggerService.getDefaultLogger().error('[ROUTE]-[USER]-ERROR: Query Failed at /auth/login route: ');
+					response = {
+						"error": true,
+						"message": "Username/Password is wrong"
+					}
+				} else {
+					let user = result.result;
+					let token = await authService.getTokenWithExpireTime(result.result.email, result.result.pass, 60*60);
+					response = {
+						name: user.name,
+						role: user.role,
+						_id: user._id,
+						email: user.email,
+						lastLogin: user.lastLogin,
+						token: token.token
+					} ;
+					// console.log('response with token: ', response);
+					res.set({
+						'X-Auth-Token': token.token
+					});
+				}
 			} else {
-				let user = result.result;
-				let token = await authService.getTokenWithExpireTime(result.result.email, result.result.password, 60	*60);
 				response = {
-					name: user.name,
-					role: user.role,
-					_id: user._id,
-					email: user.email,
-					lastLogin: user.lastLogin,
-					token: token.token
-				} ;
-				// console.log('response with token: ', response);
-				res.set({
-					'X-Auth-Token': token.token
-				});
+					"error": true,
+					"message": "Empty Username/Password"
+				};
 			}
-		} else {
-			response = {};
-		}
+
+		// }
 
 	} catch (ex) {
 		console.log(ex);
@@ -133,7 +143,7 @@ router.post('/signup', async function(req, res, next) {
 		
 
 		// registering user
-		result = await userService.sigup(req.body);
+		result = await userService.signup(req.body);
 		if(result.success) {
 			response = result.data;
 		}

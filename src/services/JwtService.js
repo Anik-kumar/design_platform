@@ -17,7 +17,12 @@ module.exports =  class JwtService {
 		return new Promise ((resolve, reject) => {
 			try {
 				let sOptions = options;
-				let expiresIn = options['expiresIn'] || 960;
+				let expiresIn = 960;
+
+				if(_.isNil(options) && !_.isNil(options['expiresIn'])){
+					expiresIn = options['expiresIn'];
+				}
+
 				if (_.isNil(sOptions) || _.isEmpty(sOptions)) {
 					sOptions = {
 						issuer: "pijus.me",
@@ -25,14 +30,7 @@ module.exports =  class JwtService {
 						audience: "Client_Identity" // this should be provided by client
 					}
 				}
-					// Token signing options
-				var signOptions = {
-					issuer:  sOptions.issuer,
-					subject:  sOptions.subject,
-					audience:  sOptions.audience,
-					expiresIn:  expiresIn,    // 30 days validity
-					algorithm:  "RS256"
-				};
+				
 				//var token = jwt.sign(payload, privateKEY, signOptions);
 				var token = jwt.sign(data, privateKEY, {
 					issuer: "pijus.me",
