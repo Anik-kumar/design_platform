@@ -153,12 +153,12 @@ module.exports = class UserService {
 	static async searchDupEmail(userEmail) {
     let result; 
     let found;
-		let err = '';
+		let err = null;
     
     try{
 			result = await userRepository.findOne({'email': userEmail});
 			
-      if(result.success) {
+      if(result.success && !_.isNil(result.result) && !_.isEmpty(result.result)) {
 				found = true;
       }else {
 				found = false;
