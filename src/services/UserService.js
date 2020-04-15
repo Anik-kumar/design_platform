@@ -68,7 +68,7 @@ module.exports = class UserService {
 
 	}
 
-	static async sigup(signup) {
+	static async signup(signup) {
 		let result = {}, success = true, token = '';
 		try {
 			// let subscription = await subscriptionService.getSubscriptionByCode(signup.subscription);
@@ -77,7 +77,7 @@ module.exports = class UserService {
 			// 	signup.subscription = subscription.data;
 			// }
 			
-			result = await userRepository.createUser(signup.email, signup.password, signup.firstName, signup.lastName, signup.phone, signup.gender, signup.dob);
+			result = await userRepository.createUser(signup.email, signup.pass, signup.firstName, signup.lastName, signup.phone, signup.gender, signup.dob);
 			if (result.success) {
 				// try {
 				// 	let signedToken = await jwtService.sign({
@@ -132,6 +132,34 @@ module.exports = class UserService {
 					found = false;
 					console.log('UserService>>  User verify status update failed');
 				}
+      }else {
+				found = false;
+				console.log('UserService>>  User not found');
+      }
+    } catch (e) {
+      console.log("Exception error in verifyUserEmail() in UserService. " + e);
+      found = false;
+			err = e;
+    }
+    
+    return {
+      error: err,
+      success: found
+    }
+    
+	}
+	
+
+	static async searchDupEmail(userEmail) {
+    let result; 
+    let found;
+		let err = null;
+    
+    try{
+			result = await userRepository.findOne({'email': userEmail});
+			
+      if(result.success && !_.isNil(result.result) && !_.isEmpty(result.result)) {
+				found = true;
       }else {
 				found = false;
 				console.log('UserService>>  User not found');

@@ -49,7 +49,7 @@ module.exports = class AuthService {
 		let signedToken = await jwtService.sign({
 			email: user,
 			pass: pass
-		}, config.secret, {
+		}, {
 			expiresIn: time // in sec.
 		});
 

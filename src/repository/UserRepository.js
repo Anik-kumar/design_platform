@@ -30,11 +30,11 @@ module.exports = class UserRepository {
     try {
       let userObj = {
         "email": email,
-        "pass": pass,
         "name": {
           "first": firstName,
           "last": lastName
         },
+        "pass": pass,
         "phone": phone,
         "gender": gender,
         "DOB": dob,
