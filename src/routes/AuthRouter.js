@@ -120,7 +120,7 @@ router.post('/signup', async function(req, res, next) {
 			let tmpEmail = req.body.email;
 			let tmpName = req.body.firstName + " " + req.body.lastName;
 			let emailVerifyToken = await jwtService.signHS256({'email': tmpEmail}, {'expiresIn': 10*60});
-			let link = "http://localhost:4200/verifyEmail?lang=en&token=";
+			let link = "http://localhost:4200/verify-email?lang=en&token=";
 			if (emailVerifyToken.auth == true) {
 				link += emailVerifyToken.token;
 			}
