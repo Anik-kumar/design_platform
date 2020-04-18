@@ -18,6 +18,7 @@ const indexRoutes = require('./routes/IndexRouter');
 const authRoutes = require('./routes/AuthRouter');
 const userRoutes = require('./routes/UserRouter');
 const emailRouter = require('./routes/EmailRouter');
+const filesRouter = require('./routes/FilesRouter');
 
 const ConfigLoader = require('./config/ConfigLoader');
 const config = new ConfigLoader();
@@ -51,6 +52,7 @@ app.use(interceptRequest);
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/email', emailRouter);
+app.use('/api/files', filesRouter);
 
 
 app.use('/', indexRoutes);
