@@ -70,6 +70,43 @@ router.post('/findEmail', async (req, res, next) => {
 });
 
 
+router.post('/send-reset-pass', async function(req, res, next) {
+	let response = {};
+	console.log(req.body.email);
+
+	try{
+    const result = await userService.sendResetPassVerification(req.body.email);
+    
+    if(result.success && _.isNil(result.error) && _.isEmpty(result.error)) {
+      response.message = "User reset password verification is sent";
+      response.success = true;
+      response.error = null;
+    } else {
+      response.message = "User password not updated";
+      response.success = false;
+      response.error = result.error;
+    }
+	} catch (err) {
+		console.log(err);
+  }
+  
+  res.send(response);
+});
+
+
+router.post('/verify-reset-pass', async function(req, res, next) {
+  let response = {};
+	console.log(req.body.email);
+
+	try{
+		const result = await userService.sendResetPassVerification(req.body.email);
+	} catch (err) {
+		console.log(err);
+  }
+  
+  res.send(response);
+});
+
 
 
 module.exports = router;
