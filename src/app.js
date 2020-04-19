@@ -19,6 +19,7 @@ const authRoutes = require('./routes/AuthRouter');
 const userRoutes = require('./routes/UserRouter');
 const emailRouter = require('./routes/EmailRouter');
 const filesRouter = require('./routes/FilesRouter');
+const tokenRouter = require('./routes/TokenRouter');
 
 const ConfigLoader = require('./config/ConfigLoader');
 const config = new ConfigLoader();
@@ -53,6 +54,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/email', emailRouter);
 app.use('/api/files', filesRouter);
+app.use('/api/token', tokenRouter);
 
 
 app.use('/', indexRoutes);
