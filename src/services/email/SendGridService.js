@@ -1,6 +1,6 @@
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey('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');
-// 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
+sgMail.setApiKey('');
+
 
 // SUBSCRIBER LIMIT MONTHLY SEND LIMIT  DAILY SEND LIMIT
 // Unlimited	    3,000	            100

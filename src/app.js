@@ -15,9 +15,11 @@ const loggingService = require('./services/LoggingService');
 // import routes
 const interceptRequest = require('./routes/InterceptRequest');
 const indexRoutes = require('./routes/IndexRouter');
-const authRoutes = require('./routes/AuthRouter');
+const authenticationRouter = require('./routes/AuthenticationRouter');
 const userRoutes = require('./routes/UserRouter');
 const emailRouter = require('./routes/EmailRouter');
+const filesRouter = require('./routes/FilesRouter');
+const tokenRouter = require('./routes/TokenRouter');
 
 const ConfigLoader = require('./config/ConfigLoader');
 const config = new ConfigLoader();
@@ -48,9 +50,11 @@ app.use(interceptRequest);
 
 // route middlewares
 // app.use('/', indexRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authenticationRouter);
 app.use('/api/user', userRoutes);
 app.use('/api/email', emailRouter);
+app.use('/api/files', filesRouter);
+app.use('/api/token', tokenRouter);
 
 
 app.use('/', indexRoutes);

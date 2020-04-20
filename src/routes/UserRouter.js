@@ -9,9 +9,7 @@ const loggerService = require('../services/LoggingService');
 const userService = require('../services/UserService');
 let {ResUserModel} = require('../models/response/response.models');
 
-router.get('/', async function(req, res, next) {
-	res.send("login route");
-});
+
 
 /**
  * This function to login user
@@ -24,50 +22,89 @@ router.get('/', async function(req, res, next) {
  * @returns {Response.UserModel} 200 - An array of user info
  * @returns {Error}  default - Unexpected error
  */
-router.post('/login', async function(req, res, next) {
-	let response = ResUserModel;
+
+
+/**
+ * this route checks for duplicate emails
+ */
+router.post('/findEmail', async (req, res, next) => {
+  let response = {};
 	try {
-		console.log(req.body);
+		let email = req.body.email;
 
-		let email = req.body.email || "", pass = req.body.pass || "";
-		//loggingService.getDefaultLogger().info('Reached Login route');
-		if(!_.isEmpty(email) && !_.isEmpty(pass)) {
+    if(!_.isEmpty(email)) {
+      let result = await userService.searchDupEmail(email);
 
-			let result = await userService.getUser(email, pass);
-			if(result.success === false ) {
-				loggerService.getDefaultLogger().error('[ROUTE]-[USER]-ERROR: Query Failed at /user/login route: ');
-				response = {
-					"error": true,
-					"message": "Username/Password is wrong"
-				}
-				
-			} else {
-				response = {
-					name: result.data.name,
-					email: result.data.email,
-					lastLogin: result.data.lastLogin,
-					token: result.token
-				}
-			}
-			res.status(200);
-		} else {
-			response = {
-				"error": true,
-				"message": "Username or Password is empty"
-			};
-			res.status(400);
-		}
+      if(result.success === false ) {
+        
+        response = {
+          "found": false,
+          "message": "User mail does not exits",
+          "error": ""
+        }
+      } else {
+        
+        response = {
+          "found": true,
+          "message": "User mail exits",
+          "error": ""
+        }
+        // console.log('response with token: ', response);
+        
+      }
+    } else {
+      response = {
+        "found": false,
+        "error": true,
+        "message": "Empty Parameter"
+      };
+    }
 
 	} catch (ex) {
-		loggerService.getDefaultLogger().error('[ROUTE]-[INDEX]-ERROR: Exception get request at /user/login route: ' + JSON.stringify(ex));
-		response = {
-			"error": true,
-			"message": "Can't able to Login. Please try again"
-		};
-		res.status(400);
+		console.log(ex);
+		loggerService.getDefaultLogger().error('[ROUTE]-[INDEX]-ERROR: Exception get request at /auth/login route: ' + JSON.stringify(ex));
 	}
 
 	res.send(response);
+
+});
+
+
+router.post('/send-reset-pass', async function(req, res, next) {
+	let response = {};
+	console.log(req.body.email);
+
+	try{
+    const result = await userService.sendResetPassVerification(req.body.email);
+    
+    if(result.success && _.isNil(result.error) && _.isEmpty(result.error)) {
+      response.message = "User reset password verification is sent";
+      response.success = true;
+      response.error = null;
+    } else {
+      response.message = "User password not updated";
+      response.success = false;
+      response.error = result.error;
+    }
+	} catch (err) {
+		console.log(err);
+  }
+  
+  res.send(response);
+});
+
+
+router.post('/verify-reset-pass', async function(req, res, next) {
+  let response = {};
+	console.log(req.body.email);
+
+	try{
+		const result = await userService.sendResetPassVerification(req.body.email);
+	} catch (err) {
+		console.log(err);
+  }
+  
+  res.send(response);
 });
 
 

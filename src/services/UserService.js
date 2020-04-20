@@ -1,8 +1,13 @@
-const Users = require('../models/mongo/users');
 const _ = require('lodash');
+const fs = require('fs');
+const { exec } = require("child_process");
+
+const Users = require('../models/mongo/users');
 const userRepository = require('../repository/UserRepository');
+
 const jwtService = require('../services/JwtService');
 const loggerService = require('../services/LoggingService');
+const emailService = require('../services/email/EmailService');
 
 
 module.exports = class UserService {
@@ -68,7 +73,7 @@ module.exports = class UserService {
 
 	}
 
-	static async sigup(signup) {
+	static async signup(signup) {
 		let result = {}, success = true, token = '';
 		try {
 			// let subscription = await subscriptionService.getSubscriptionByCode(signup.subscription);
@@ -77,7 +82,7 @@ module.exports = class UserService {
 			// 	signup.subscription = subscription.data;
 			// }
 			
-			result = await userRepository.createUser(signup.email, signup.password, signup.firstName, signup.lastName, signup.phone, signup.gender, signup.dob);
+			result = await userRepository.createUser(signup.email, signup.pass, signup.firstName, signup.lastName, signup.phone, signup.gender, signup.dob);
 			if (result.success) {
 				// try {
 				// 	let signedToken = await jwtService.sign({
@@ -103,4 +108,206 @@ module.exports = class UserService {
 			success: success
 		}
 	}
+  
+  
+  static async verifyUserEmail(userEmail) {
+    let result; 
+    let found = true;
+		let err = '';
+		let updateUser;
+    
+    try{
+      result = await userRepository.findOne({'email': userEmail, 'verification.email.email_sent': true});
+			
+			
+      if(result.success) {
+				
+				updateUser = await userRepository.updateOne({
+					'email': userEmail, 
+					'verification.email.email_sent': true
+				}, {
+					'verification.email.verified': true, 
+					'verification.email.email_sent': false
+				});
+
+				if(updateUser.success) {
+					found = true;
+					console.log('UserService>>  User verify status updated');
+				}else {
+					found = false;
+					console.log('UserService>>  User verify status update failed');
+				}
+      }else {
+				found = false;
+				console.log('UserService>>  User not found');
+      }
+    } catch (e) {
+      console.log("Exception error in verifyUserEmail() in UserService. " + e);
+      found = false;
+			err = e;
+    }
+    
+    return {
+      error: err,
+      success: found
+    }
+    
+	}
+	
+
+	static async searchDupEmail(userEmail) {
+    let result; 
+    let found;
+		let err = null;
+    
+    try{
+			result = await userRepository.findOne({'email': userEmail});
+			
+      if(result.success && !_.isNil(result.result) && !_.isEmpty(result.result)) {
+				found = true;
+      }else {
+				found = false;
+				console.log('UserService>>  User not found');
+      }
+    } catch (e) {
+      console.log("Exception error in verifyUserEmail() in UserService. " + e);
+      found = false;
+			err = e;
+    }
+    
+    return {
+      error: err,
+      success: found
+    }
+    
+	}
+	
+
+	static async sendResetPassVerification(userEmail) {
+    let result; 
+    let found;
+		let err = null;
+		let updateUser;
+    
+    try{
+			// checking if user exists
+			result = await userRepository.findOne({
+				'email': userEmail,
+				'verification.is_reset_pass_active': false});
+			// console.log("-> User => ", result);
+			// console.log("-> User firstname => ", result.result.name.first);
+			// console.log("-> User lastname => ", result.result.name.last);
+			
+      if(result.success && !_.isNil(result.result) && !_.isEmpty(result.result)) {
+				found = true;
+				const tmpFirst = result.result.name.first;
+				const tmpLast = result.result.name.last;
+				const tmpName = tmpFirst + " " + tmpLast;
+				
+
+				// generating jwt token
+				let emailVerifyToken = await jwtService.signHS256({'email': userEmail}, {'expiresIn': 10*60});
+				// generating link
+				let link = "http://localhost:4200/password/verify?lang=en&token=";
+				if (emailVerifyToken.auth == true) {
+					link += emailVerifyToken.token;
+				}
+
+				console.log("Link => ", link);
+				// reading template file
+				try {
+					
+					let content = await fs.readFileSync('./src/email/forgot-pass.html', 'utf8', (err, data) => {
+						if(err) {
+							return console.log("File Reading Error " , err);
+						}
+						
+						let fileResult = data.replace(/URL_LINK/g, link);
+						fileResult = fileResult.replace(/USER_NAME/g, tmpName);
+						// sending verification email
+						emailService.prepareToSendEmail(userEmail, 'Welcome To Design Platform',fileResult, 'Design Platform');
+	
+						// updating user 'is_reset_pass_active' status
+						updateUser = userRepository.updateOne({
+							'email': userEmail, 
+							'verification.is_reset_pass_active': false
+						}, { 
+							'verification.is_reset_pass_active': true
+						});
+	
+						if(updateUser.success) {
+							found = true;
+							console.log('UserService>>  User status updated');
+						}else {
+							found = false;
+							console.log('UserService>>  User status not found');
+						}
+	
+					});
+				} catch(err) {
+					console.log(err)
+				}
+
+      }else {
+				found = false;
+				console.log('UserService>>  User not found');
+      }
+    } catch (e) {
+      console.log("Exception error in verifyUserEmail() in UserService. " + e);
+      found = false;
+			err = e;
+    }
+    
+    return {
+      error: err,
+      success: found
+    }
+    
+	}
+	
+
+	static async verifyResetPass(userEmail, userPass) {
+		let result; 
+    let found = true;
+		let err = '';
+		let updateUser;
+    
+    try{
+      result = await userRepository.findOne({'email': userEmail, 'verification.is_reset_pass_active': true});
+			
+			
+      if(result.success) {
+				
+				updateUser = await userRepository.updateOne({
+					'email': userEmail, 
+					'verification.is_reset_pass_active': true
+				}, {
+					'pass': userPass, 
+					'verification.is_reset_pass_active': false
+				});
+
+				if(updateUser.success) {
+					found = true;
+					console.log('UserService>>  User verify status updated');
+				}else {
+					found = false;
+					console.log('UserService>>  User verify status update failed');
+				}
+      }else {
+				found = false;
+				console.log('UserService>>  User not found');
+      }
+    } catch (e) {
+      console.log("Exception error in verifyUserEmail() in UserService. " + e);
+      found = false;
+			err = e;
+    }
+    
+    return {
+      error: err,
+      success: found
+		}
+		
+	}
+  
 };
