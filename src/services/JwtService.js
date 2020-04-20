@@ -59,8 +59,7 @@ module.exports =  class JwtService {
 					issuer: "pijus.me",
 					subject: "admin@pijus.me",
 					audience:  'Client_Identity',
-					expiresIn:  960,
-					algorithm:  ["RS256"]
+					algorithms:  ["RS256"]
 				};
 
 				var verifiedToken = jwt.verify(token, privateKEY, verifyOptions,  (err, decoded) => {
