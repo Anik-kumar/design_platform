@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs');
 const { exec } = require("child_process");
+const bcrypt = require('bcrypt');
 
 const Users = require('../models/mongo/users');
 const userRepository = require('../repository/UserRepository');
@@ -55,9 +56,13 @@ module.exports = class UserService {
 		let result, success = true, data;
 
 		try {
-			result = await userRepository.getUser(email, password);
+			result = await userRepository.getUserByEmail(email);
 			if (result.success) {
 				data = result.data[0];
+				let matched = await bcrypt.compare(password, data['pass']);
+				if (!matched) {
+					data = {};
+				} 
 			} else {
 				success = false;
 			}
@@ -82,7 +87,7 @@ module.exports = class UserService {
 			// 	signup.subscription = subscription.data;
 			// }
 			
-			result = await userRepository.createUser(signup.email, signup.pass, signup.firstName, signup.lastName, signup.phone, signup.gender, signup.dob);
+			result = await userRepository.createUser(signup.unique_id, signup.email, signup.pass, signup.firstName, signup.lastName, signup.phone, signup.gender, signup.dob);
 			if (result.success) {
 				// try {
 				// 	let signedToken = await jwtService.sign({

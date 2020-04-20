@@ -23,12 +23,33 @@ module.exports = class UserRepository {
       success: success
     }
   }
+  
+  
+  static async getUserByEmail(email) {
+    let result = {}, success = true;
+    try {
+      result = await Users.find({
+        "email": email
+      }).exec();
+    } catch (ex) {
+      loggerService.getDefaultLogger().error('[UserRepository]-ERROR: Exception at getUser(): ' + JSON.stringify(ex));
+      success = false;
+    }
+
+    return {
+      data: result,
+      success: success
+    }
+  }
 
 
-  static async createUser(email, pass, firstName, lastName, phone, gender, dob) {
+
+
+  static async createUser(unique_id, email, pass, firstName, lastName, phone, gender, dob) {
     let result = {}, success = true;
     try {
       let userObj = {
+        "unique_id": unique_id,
         "email": email,
         "name": {
           "first": firstName,

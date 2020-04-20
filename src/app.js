@@ -16,6 +16,7 @@ const loggingService = require('./services/LoggingService');
 const interceptRequest = require('./routes/InterceptRequest');
 const indexRoutes = require('./routes/IndexRouter');
 const authenticationRouter = require('./routes/AuthenticationRouter');
+const authorizationRouter = require('./routes/AuthorizationRouter');
 const userRoutes = require('./routes/UserRouter');
 const emailRouter = require('./routes/EmailRouter');
 const filesRouter = require('./routes/FilesRouter');
@@ -51,6 +52,7 @@ app.use(interceptRequest);
 // route middlewares
 // app.use('/', indexRoutes);
 app.use('/api/auth', authenticationRouter);
+app.use('/api/authorize', authorizationRouter);
 app.use('/api/user', userRoutes);
 app.use('/api/email', emailRouter);
 app.use('/api/files', filesRouter);
