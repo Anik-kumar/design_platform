@@ -10,7 +10,7 @@ module.exports = class EmailService {
     }
 
     /**
-     * 
+     *
      * @param {string} sernderService - Email sending service
      * @param {string} to - Email address
      * @param {string} name - Sender Name
@@ -40,7 +40,7 @@ module.exports = class EmailService {
         } catch (ex) {
             loggingService.getDefaultLogger().error('[EmailService]-ERROR: Exception at sendEmail(): ' + (ex.message || ''));
         }
-        
+
         return response;
     }
 
@@ -50,12 +50,12 @@ module.exports = class EmailService {
             "message": "Unfortunately email can't be sent at this moment."
         };
         try {
-            
+
             let emailsToday = await emailCountService.getTodaysEmailCount();
             if (emailsToday != null && emailsToday.success == true) {
                 if (emailsToday.data.length > 0) {
                     let sender = '', apiKey = '';
-                    
+
                     let orderedService = sortBy(emailsToday.data, ['priority']);
                     for(let service of orderedService) {
                         if (service['total_sent'] < service['daily_limit']) {
@@ -63,7 +63,7 @@ module.exports = class EmailService {
                             break;
                         }
                     }
-                    sender = 'SENDINBLUE1';
+                    sender = 'SENDGRID1';
                     response = await EmailService.sendEmail(sender, to, name, subject, content);
                 } else {
                     let result = await emailConfigService.getAllConfig();
