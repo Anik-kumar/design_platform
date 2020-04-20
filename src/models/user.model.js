@@ -21,20 +21,21 @@ var UserModel = {
 		city: String,
 	},
 	role: [],
+	acl: [],
 	avatar: String,
 	cover_photo: String,
 	reward_points: Number,
 	verification: {
 		email: {
-			verified: Boolean,
+			verified: { type: Boolean, default: false},
 			email_sent: Boolean
 		},
 		phone: {
-			verified: Boolean,
-			code_sent: Boolean,
+			verified: { type: Boolean, default: false},
+			code_sent: { type: Boolean, default: false},
 			codes: []
 		},
-		is_reset_pass_active: Boolean
+		is_reset_pass_active: { type: Boolean, default: false}
 	},
 	social_profiles: {
 		fb: {
@@ -102,10 +103,15 @@ var UserModel = {
 			logo: String
 		},
 	},
-	is_verified: Boolean,
-	is_deleted: Boolean,
+	is_verified: { type: Boolean, default: false},
+	is_deleted: { type: Boolean, default: false},
 	date_created: Date,
-	last_login: Date
+	last_login: Date,
+	updated_at: {
+		type: Date,
+		// `Date.now()` returns the current unix timestamp as a number
+		default: Date.now
+	}
 };
 
 module.exports = UserModel;
