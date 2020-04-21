@@ -94,18 +94,6 @@ router.post('/send-reset-pass', async function(req, res, next) {
 });
 
 
-router.post('/verify-reset-pass', async function(req, res, next) {
-  let response = {};
-	console.log(req.body.email);
-
-	try{
-		const result = await userService.sendResetPassVerification(req.body.email);
-	} catch (err) {
-		console.log(err);
-  }
-  
-  res.send(response);
-});
 
 
 

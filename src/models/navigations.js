@@ -161,6 +161,7 @@ var testNav = [
           "name": "Dashboard",
           "active": false,
           "collapsed": true,
+          "route": "/dashboard",
           "style": {
             "height": "0px"
           },
@@ -169,11 +170,21 @@ var testNav = [
             "name": "New design",
             "active": false,
             "collapsed": true,
+            "route": "/design",
             "style": {
               "height": "0px"
             },
             "subMenu": []
-        }]  
+        }, {
+        "name": "Show design",
+        "active": false,
+        "collapsed": true,
+        "route": "/design/list",
+        "style": {
+          "height": "0px"
+        },
+        "subMenu": []
+      }]
     }];
 
   module.exports = {

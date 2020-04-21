@@ -1,6 +1,7 @@
 const session = require('express-session');
 const ConfigLoader = require('../config/ConfigLoader');
 const jwtService = require('../services/JwtService');
+const userRepository = require('../repository/UserRepository');
 const _ = require('lodash');
 const config = new ConfigLoader();
 
@@ -9,9 +10,11 @@ module.exports = class AuthService {
 	constructor() {
 		this.sessionStore = new session.MemoryStore();
 	}
+
 	static getSessionStore() {
 		return this.sessionStore;
 	}
+
 
 	async isAuthorized(req, res) {
 		let response = false;
@@ -24,10 +27,11 @@ module.exports = class AuthService {
 			response = true;
 			console.log('verified: ', verified);
 		} catch (ex) {
-
+			console.log(ex);
 		}
 		return response;
 	}
+
 
 	static async getToken(user, pass) {
 		var user = { user, pass };
@@ -36,6 +40,7 @@ module.exports = class AuthService {
 		console.log("Token Created => " , token);
 		return token;
 	}
+
 
 	static async getTokenWithExpireTime(user, unique_id, time) {
 		if (time == null || time == undefined) {
@@ -55,5 +60,37 @@ module.exports = class AuthService {
 
 		console.log("Token Created => " , signedToken);
 		return signedToken;
+	}
+
+
+	static async resetPassword(email, pass) {
+		let error = null;
+		let found = null;
+		let result = null;
+		try{
+			result = await userRepository.updateOne({'email': email}, { 'pass': pass});
+
+			if(result.success) {
+				found = true;
+				error = null;
+				result = result.result;
+			}else {
+				found = false;
+				error = "Password not updated";
+				result = result.result;
+			}
+			
+		} catch(err) {
+			console.log("Exception in AuthService resetPassword() => ", err);
+			error = err;
+			found = false;
+			result = result.result;
+		}
+
+		return {
+			success: found,
+			error: error,
+			result: result
+		};
 	}
 };
