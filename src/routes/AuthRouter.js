@@ -3,9 +3,6 @@ const router = express.Router();
 const _ = require('lodash');
 const fs = require('fs');
 const Joi = require('@hapi/joi');
-const uuid = require('uuid/v4')
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
 
 
 const jwtService = require('../services/JwtService');
@@ -13,7 +10,7 @@ const loggerService = require('../services/LoggingService');
 const userService = require('../services/UserService');
 const authService = require('../services/AuthService');
 const emailService = require('../services/email/EmailService');
-const fileService = require('../services/FileService');
+
 
 router.post('/ink', (req, res, next) => {
 
@@ -27,7 +24,7 @@ router.post('/login', async function(req, res, next) {
 	try {
 		//console.log(req.body);
 		let email = req.body.email || "", pass = req.body.pass || "";
-
+		
 
 		const schemaEmail = Joi.object({
 			email: Joi.string().email().required().messages({
@@ -45,37 +42,49 @@ router.post('/login', async function(req, res, next) {
 		const errorEmail = schemaEmail.validate({'email': email});
 		const errorPass = schemaPass.validate({'pass': pass});
 
-		if(!_.isEmpty(email) && !_.isEmpty(pass)) {
-			let result = await userService.findUserByEmailAndPassword(email, pass);
-			if(result.success === false ) {
-				loggerService.getDefaultLogger().error('[ROUTE]-[USER]-ERROR: Query Failed at /auth/login route: ');
-				response = {
-					"error": true,
-					"message": "Username/Password is wrong"
+
+		// if(errorEmail.length > 5 || errorPass.length > 5) {
+		// 	console.log("Joi Validation Error Email ,", errorEmail.error);
+		// 	console.log("Joi Validation Error Password ,", errorPass.error);
+		// 	response = {
+		// 		"error": true,
+		// 		"message": "Please Enter Valid Email or Password"
+		// 	};
+			
+		// } else {
+
+			if(!_.isEmpty(email) && !_.isEmpty(pass)) {
+				let result = await userService.findUserByEmailAndPassword(email, pass);
+				if(result.success === false ) {
+					loggerService.getDefaultLogger().error('[ROUTE]-[USER]-ERROR: Query Failed at /auth/login route: ');
+					response = {
+						"error": true,
+						"message": "Username/Password is wrong"
+					}
+				} else {
+					let user = result.result;
+					let token = await authService.getTokenWithExpireTime(result.result.email, result.result.pass, 60*60);
+					response = {
+						name: user.name,
+						role: user.role,
+						_id: user._id,
+						email: user.email,
+						lastLogin: user.lastLogin,
+						token: token.token
+					} ;
+					// console.log('response with token: ', response);
+					res.set({
+						'X-Auth-Token': token.token
+					});
 				}
 			} else {
-				let user = result.result;
-				let token = await authService.getTokenWithExpireTime(result.result.email, result.result.unique_id, 24*60*60);
 				response = {
-					name: user.name,
-					unique_id: user.unique_id,
-					role: user.role,
-					_id: user._id,
-					email: user.email,
-					lastLogin: user.lastLogin,
-					token: token.token
+					"error": true,
+					"message": "Empty Username/Password"
 				};
-				// console.log('response with token: ', response);
-				res.set({
-					'X-Auth-Token': token.token
-				});
 			}
-		} else {
-			response = {
-				"error": true,
-				"message": "Empty Username/Password"
-			};
-		}
+
+		// }
 
 	} catch (ex) {
 		console.log(ex);
@@ -89,7 +98,7 @@ router.post('/login', async function(req, res, next) {
 
 router.post('/signup', async function(req, res, next) {
 	let response = {};
-
+	
 	const regSchema = Joi.object({
 		email: Joi.string().trim().email().required(),
 		firstName: Joi.string().trim().min(3).max(20).required(),
@@ -97,8 +106,7 @@ router.post('/signup', async function(req, res, next) {
 		pass: Joi.string().trim().min(3).required(),
 		phone: Joi.string().trim().min(3).required(),
 		gender: Joi.string().trim().required(),
-		dob: Joi.date().required(),
-		userType: Joi.string().required()
+		dob: Joi.date().required()
 	});
 
 	try{
@@ -116,21 +124,22 @@ router.post('/signup', async function(req, res, next) {
 			}
 			console.log(link);
 
-
-			try {
-				let data = await fileService.read('./src/email/signup-email.html');
+			let content = await fs.readFile('./src/email/signup-email.html', 'utf8', (err, data) => {
+				if(err) {
+					return console.log("File Reading Error " , err);
+				}
+				
 				let result = data.replace(/CONFIRM_URL/g, link);
 				result = result.replace(/USER_NAME/g, tmpName);
-				emailService.prepareToSendEmail(req.body.email, 'Welcome To Design Platform', result, 'Design Platform');
-			} catch(err) {
-				console.log("File Reading Error " , err);
-			}
+
+					// sending verification email
+				emailService.prepareToSendEmail(req.body.email, 'Welcome To Design Platform',result, 'Design Platform');
+			});
 		} catch(err) {
 			console.log(err);
 		}
+		
 
-		req.body['unique_id'] = uuid();
-		req.body['pass'] = await bcrypt.hash(req.body['pass'], saltRounds);
 		// registering user
 		result = await userService.signup(req.body);
 		if(result.success) {
@@ -145,6 +154,14 @@ router.post('/signup', async function(req, res, next) {
 		}
 		res.status(400);
 	}
+
+
+	// if(result.success) {
+	// 	console.log("Data Retrived");
+	// 	console.log("Token => ", result.token);
+	// 	console.log("Data => ", result.data);
+	// }
+
 	res.send(response);
 });
 
@@ -156,13 +173,13 @@ router.post('/verify-email', async function(req, res, next) {
 
 	const result = await jwtService.verifyHS256(req.body.token, { 'expiresIn' : 20*60 });
 	console.log("AuthRoute +> ", result);
-
+  
   const userMail = result.data.email;
-
+  
   let isFound = await userService.verifyUserEmail(result.data.email);
-
+  
   console.log("---> AuthRouter => ", isFound);
-
+  
   if(isFound.success) {
     response.message = "User email found";
     response.success = true;
@@ -177,7 +194,7 @@ router.post('/verify-email', async function(req, res, next) {
 	// response.Data = req.body;
 //	response = result;
   res.status(200);
-
+  
 //  {data: {…}, token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6I…1lIn0.	1IuxjLfEdp9XH-43RfD0nE2ak6Oz7gbnp-o_MZ800Wk"}
 //{ data: {
 //    email: "anik.kumar.sarker@gmail.com"
@@ -222,7 +239,7 @@ router.post('/reset-pass', async function(req, res, next) {
 			}
 
 		}
-
+		
 	} catch(err) {
 		console.log(err);
 		if(err.message == "jwt expired" && err.expiredAt.length > 0) {
@@ -231,9 +248,9 @@ router.post('/reset-pass', async function(req, res, next) {
 			response.error = "TokenExpiredError";
 		}
 	}
-
+	
   res.status(200);
-
+  
 
 //{ data: {
 //    email: "anik.kumar.sarker@gmail.com"

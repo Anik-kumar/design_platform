@@ -62,7 +62,7 @@ module.exports = class UserService {
 				let matched = await bcrypt.compare(password, data['pass']);
 				if (!matched) {
 					data = {};
-				} 
+				}
 			} else {
 				success = false;
 			}
@@ -86,8 +86,8 @@ module.exports = class UserService {
 			// if (subscription.success) {
 			// 	signup.subscription = subscription.data;
 			// }
-			
-			result = await userRepository.createUser(signup.unique_id, signup.email, signup.pass, signup.firstName, signup.lastName, signup.phone, signup.gender, signup.dob);
+
+			result = await userRepository.createUser(signup.unique_id, signup.email, signup.pass, signup.userType, signup.firstName, signup.lastName, signup.phone, signup.gender, signup.dob);
 			if (result.success) {
 				// try {
 				// 	let signedToken = await jwtService.sign({
@@ -113,61 +113,76 @@ module.exports = class UserService {
 			success: success
 		}
 	}
-  
-  
+
+
   static async verifyUserEmail(userEmail) {
-    let result; 
+    let result;
     let found = true;
 		let err = '';
 		let updateUser;
-    
-    try{
-      result = await userRepository.findOne({'email': userEmail, 'verification.email.email_sent': true});
-			
-			
-      if(result.success) {
-				
-				updateUser = await userRepository.updateOne({
-					'email': userEmail, 
-					'verification.email.email_sent': true
-				}, {
-					'verification.email.verified': true, 
-					'verification.email.email_sent': false
-				});
 
-				if(updateUser.success) {
-					found = true;
-					console.log('UserService>>  User verify status updated');
-				}else {
-					found = false;
-					console.log('UserService>>  User verify status update failed');
-				}
-      }else {
-				found = false;
-				console.log('UserService>>  User not found');
-      }
+    try{
+      // result = await userRepository.findOne({'email': userEmail, 'verification.email.email_sent': true});
+	  //
+      // if(result.success) {
+		// updateUser = await userRepository.updateOne({
+		// 	'email': userEmail,
+		// 	'verification.email.email_sent': true
+		// }, {
+		// 	'verification.email.verified': true,
+		// 	'verification.email.email_sent': false,
+		// 	'is_verified': true,
+		// });
+	  //
+		// if(updateUser.success) {
+		// 	found = true;
+		// 	console.log('UserService>>  User verify status updated');
+		// }else {
+		// 	found = false;
+		// 	console.log('UserService>>  User verify status update failed');
+		// }
+      // }else {
+		// 		found = false;
+		// 		console.log('UserService>>  User not found');
+      // }
+		updateUser = await userRepository.updateOne({
+			'email': userEmail,
+			'verification.email.email_sent': true
+		}, {
+			'verification.email.verified': true,
+			'verification.email.email_sent': false,
+			'is_verified': true,
+		});
+		console.log('updateUser:', updateUser);
+		if(updateUser.success && !_.isNil(updateUser.result) && updateUser.result.n == 1 &&  updateUser.result.nModified == 1 && updateUser.result.ok == 1 ) {
+			found = true;
+			console.log('UserService>>  User verify status updated');
+		}else {
+			found = false;
+			console.log('UserService>>  User verify status update failed');
+		}
     } catch (e) {
       console.log("Exception error in verifyUserEmail() in UserService. " + e);
       found = false;
 			err = e;
     }
-    
+
     return {
       error: err,
       success: found
     }
-    
+
 	}
-	
+
 
 	static async searchDupEmail(userEmail) {
-    let result; 
+    let result;
     let found;
 		let err = null;
-    
+
     try{
 			result = await userRepository.findOne({'email': userEmail});
-			
+
       if(result.success && !_.isNil(result.result) && !_.isEmpty(result.result)) {
 				found = true;
       }else {
@@ -179,21 +194,21 @@ module.exports = class UserService {
       found = false;
 			err = e;
     }
-    
+
     return {
       error: err,
       success: found
     }
-    
+
 	}
-	
+
 
 	static async sendResetPassVerification(userEmail) {
-    let result; 
+    let result;
     let found;
 		let err = null;
 		let updateUser;
-    
+
     try{
 			// checking if user exists
 			result = await userRepository.findOne({
@@ -202,13 +217,13 @@ module.exports = class UserService {
 			// console.log("-> User => ", result);
 			// console.log("-> User firstname => ", result.result.name.first);
 			// console.log("-> User lastname => ", result.result.name.last);
-			
+
       if(result.success && !_.isNil(result.result) && !_.isEmpty(result.result)) {
 				found = true;
 				const tmpFirst = result.result.name.first;
 				const tmpLast = result.result.name.last;
 				const tmpName = tmpFirst + " " + tmpLast;
-				
+
 
 				// generating jwt token
 				let emailVerifyToken = await jwtService.signHS256({'email': userEmail}, {'expiresIn': 10*60});
@@ -221,25 +236,25 @@ module.exports = class UserService {
 				console.log("Link => ", link);
 				// reading template file
 				try {
-					
+
 					let content = await fs.readFileSync('./src/email/forgot-pass.html', 'utf8', (err, data) => {
 						if(err) {
 							return console.log("File Reading Error " , err);
 						}
-						
+
 						let fileResult = data.replace(/URL_LINK/g, link);
 						fileResult = fileResult.replace(/USER_NAME/g, tmpName);
 						// sending verification email
 						emailService.prepareToSendEmail(userEmail, 'Welcome To Design Platform',fileResult, 'Design Platform');
-	
+
 						// updating user 'is_reset_pass_active' status
 						updateUser = userRepository.updateOne({
-							'email': userEmail, 
+							'email': userEmail,
 							'verification.is_reset_pass_active': false
-						}, { 
+						}, {
 							'verification.is_reset_pass_active': true
 						});
-	
+
 						if(updateUser.success) {
 							found = true;
 							console.log('UserService>>  User status updated');
@@ -247,7 +262,7 @@ module.exports = class UserService {
 							found = false;
 							console.log('UserService>>  User status not found');
 						}
-	
+
 					});
 				} catch(err) {
 					console.log(err)
@@ -262,32 +277,32 @@ module.exports = class UserService {
       found = false;
 			err = e;
     }
-    
+
     return {
       error: err,
       success: found
     }
-    
+
 	}
-	
+
 
 	static async verifyResetPass(userEmail, userPass) {
-		let result; 
+		let result;
     let found = true;
 		let err = '';
 		let updateUser;
-    
+
     try{
       result = await userRepository.findOne({'email': userEmail, 'verification.is_reset_pass_active': true});
-			
-			
+
+
       if(result.success) {
-				
+
 				updateUser = await userRepository.updateOne({
-					'email': userEmail, 
+					'email': userEmail,
 					'verification.is_reset_pass_active': true
 				}, {
-					'pass': userPass, 
+					'pass': userPass,
 					'verification.is_reset_pass_active': false
 				});
 
@@ -307,12 +322,12 @@ module.exports = class UserService {
       found = false;
 			err = e;
     }
-    
+
     return {
       error: err,
       success: found
 		}
-		
+
 	}
-  
+
 };
