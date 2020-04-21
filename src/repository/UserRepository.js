@@ -3,7 +3,7 @@ var _ = require('lodash');
 var loggerService = require('../services/LoggingService');
 
 module.exports = class UserRepository {
-  
+
   constructor() { }
 
   static async getUser(email, pass) {
@@ -23,8 +23,8 @@ module.exports = class UserRepository {
       success: success
     }
   }
-  
-  
+
+
   static async getUserByEmail(email) {
     let result = {}, success = true;
     try {
@@ -43,9 +43,7 @@ module.exports = class UserRepository {
   }
 
 
-
-
-  static async createUser(unique_id, email, pass, firstName, lastName, phone, gender, dob) {
+  static async createUser(unique_id, email, pass, userType, firstName, lastName, phone, gender, dob) {
     let result = {}, success = true;
     try {
       let userObj = {
@@ -56,6 +54,7 @@ module.exports = class UserRepository {
           "last": lastName
         },
         "pass": pass,
+        "user_type": userType,
         "phone": phone,
         "gender": gender,
         "DOB": dob,
@@ -95,20 +94,21 @@ module.exports = class UserRepository {
       success: success
     }
   }
+
   
   static async findOne(filter) {
     let success = true;
     let result = {};
     console.log("From UserRepository => ", filter);
-    
+
     try{
       result = await Users.findOne(filter).exec();
     } catch(ex) {
       loggerService.getDefaultLogger().error('[UserRepository]-ERROR: Exception at find(): ' + JSON.stringify(ex));
       success = false;
     }
-    
-    
+
+
     return {
       success: success,
       result: result
@@ -120,7 +120,7 @@ module.exports = class UserRepository {
     let success = true;
     let result = {};
     console.log("From UserRepository => ", email);
-    
+
     try{
       result = await Users.findOne({
         "email" : email
@@ -129,8 +129,8 @@ module.exports = class UserRepository {
       loggerService.getDefaultLogger().error('[UserRepository]-ERROR: Exception at findUser(): ' + JSON.stringify(ex));
       success = false;
     }
-    
-    
+
+
     return {
       success: success,
       result: result
@@ -152,8 +152,8 @@ module.exports = class UserRepository {
   // }
 
   /**
-   * Funtion to update single document in Users colletion 
-   * 
+   * Funtion to update single document in Users colletion
+   *
    * @param {object} filter - find object
    * @param {object} updateObj - data
    * @returns {Promise<{success: boolean, result: UserModel }>}

@@ -8,10 +8,7 @@ var UserModel = {
 	pass: String,
 	phone: String,
 	gender: String,
-	user_type: {
-		name: String,
-		description: String
-	},
+	user_type: String,
 	DOB: Date,
 	address: {
 		house: Number,
