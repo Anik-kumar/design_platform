@@ -155,6 +155,7 @@ var testNav = [
     }
   ];
 
+  
   var baseNav = [{
       "name": "CORE",
       "menu": [{
@@ -162,8 +163,10 @@ var testNav = [
           "active": false,
           "collapsed": true,
           "route": "/dashboard",
+          "icon": "monitor",
           "style": {
-            "height": "0px"
+            "height": "0px",
+            "padding-top": "0px"
           },
           "subMenu": []
         }, {
@@ -171,8 +174,10 @@ var testNav = [
             "active": false,
             "collapsed": true,
             "route": "/design",
+            "icon": "plus",
             "style": {
-              "height": "0px"
+              "height": "0px",
+              "padding-top": "0px"
             },
             "subMenu": []
         }, {
@@ -180,14 +185,17 @@ var testNav = [
         "active": false,
         "collapsed": true,
         "route": "/design/list",
+        "icon": "image",
         "style": {
-          "height": "0px"
+          "height": "0px",
+          "padding-top": "0px"
         },
         "subMenu": []
       }]
     }];
 
-  module.exports = {
-    test_nav: testNav,
-    base_nav: baseNav
-  }
+
+module.exports = {
+  test_nav: testNav,
+  base_nav: baseNav
+}

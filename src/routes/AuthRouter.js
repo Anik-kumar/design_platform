@@ -219,13 +219,15 @@ router.post('/reset-pass', async function(req, res, next) {
 	console.log(req.body.token);
 
 	try {
-		const result = await jwtService.verifyHS256(req.body.token, { 'expiresIn' : 10*60 });
-		console.log("AuthRoute +> ", result);
+		// const result = await jwtService.verifyHS256(req.body.token, { 'expiresIn' : 10*60 });
+		// console.log("AuthRoute +> ", result);
+		let email = req.body.email;
+		let pass = req.body.password;
 
-		if(result.success && !_.isNil(result.data.email) && !_.isEmpty(result.data.email)) {
-			const userMail = result.data.email;
-			const userPass = req.body.pass;
-			let isFound = await userService.verifyResetPass(userMail, userPass);
+		if(!_.isNil(email) && !_.isEmpty(email) && !_.isNil(pass) && !_.isEmpty(pass)) {
+			// const userMail = result.data.email;
+			// const userPass = req.body.pass;
+			let isFound = await authService.resetPassword(email, pass);
 			console.log("---> AuthRouter => ", isFound);
 
 			if(isFound.success) {

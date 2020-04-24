@@ -16,6 +16,12 @@ module.exports = class UserService {
 
 	}
 
+	/** 
+	 * user login
+	 * @param {string} email 
+	 * @param {string} pass 
+	 * @returns { Promise<{data: object, token: string, success: boolean}>}
+	 */
 	static async getUser(email, pass) {
 		let result = {}, success = true, token = '';
 		try {
@@ -46,12 +52,11 @@ module.exports = class UserService {
 		}
 	}
 
-	/*
-  	*  @param email Email address of the user
-  	*  @param password Password of the user
-  	*  @return { Promise<{result: *, success: *}>}
-  	*
-  	* */
+	/**
+	 *  @param email Email address of the user
+	 *   @param password Password of the user
+	 *   @returns { Promise<{result: *, success: *}>}
+	 */
 	static async findUserByEmailAndPassword(email, password) {
 		let result, success = true, data;
 
@@ -78,6 +83,11 @@ module.exports = class UserService {
 
 	}
 
+	/** 
+	 * user registration
+	 * @param {string} userEmail 
+	 * @return { Promise<{data: object, token: string, success: boolean}>}
+	 */
 	static async signup(signup) {
 		let result = {}, success = true, token = '';
 		try {
@@ -114,7 +124,11 @@ module.exports = class UserService {
 		}
 	}
 
-
+	/**
+	 * verify usermail
+	 * @param {string} userEmail 
+	 * @return { Promise<{error: string, success: boolean}>}
+	 */
   static async verifyUserEmail(userEmail) {
     let result;
     let found = true;
@@ -174,7 +188,11 @@ module.exports = class UserService {
 
 	}
 
-
+	/**
+	 * Search for duplicate emails
+	 * @param {string} userEmail 
+	 * @return { Promise<{error: string, success: boolean}>}
+	 */
 	static async searchDupEmail(userEmail) {
     let result;
     let found;
@@ -202,7 +220,11 @@ module.exports = class UserService {
 
 	}
 
-
+	/**
+	 * Verifies email and sends a verification email to user
+	 * @param {string} userEmail 
+	 * @return { Promise<{error: string, success: boolean}>}
+	 */
 	static async sendResetPassVerification(userEmail) {
     let result;
     let found;
@@ -245,7 +267,7 @@ module.exports = class UserService {
 						let fileResult = data.replace(/URL_LINK/g, link);
 						fileResult = fileResult.replace(/USER_NAME/g, tmpName);
 						// sending verification email
-						emailService.prepareToSendEmail(userEmail, 'Welcome To Design Platform',fileResult, 'Design Platform');
+						emailService.prepareToSendEmail(userEmail, 'Reset Password Verification',fileResult, 'Design Platform');
 
 						// updating user 'is_reset_pass_active' status
 						updateUser = userRepository.updateOne({
@@ -285,7 +307,12 @@ module.exports = class UserService {
 
 	}
 
-
+	/**
+	 * Updates user password
+	 * @param {string} userEmail 
+	 * @param {string} userPass 
+	 * @return { Promise<{error: string, success: boolean}>}
+	 */
 	static async verifyResetPass(userEmail, userPass) {
 		let result;
     let found = true;
@@ -294,7 +321,6 @@ module.exports = class UserService {
 
     try{
       result = await userRepository.findOne({'email': userEmail, 'verification.is_reset_pass_active': true});
-
 
       if(result.success) {
 

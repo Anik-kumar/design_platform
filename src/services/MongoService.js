@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 var ConfigLoader = require('../config/ConfigLoader');
 var config = new ConfigLoader();
 const loggingService = require('./LoggingService');
-
+const _ = require('lodash');
 /**
  * Singleton Mongo service wrapper class to connect to Mongo
  * */
@@ -11,7 +11,7 @@ class MongoService {
 
 	constructor() {
 		console.log('MongoService init');
-		//this.logger = loggingService.getDefaultLogger();
+		//this.logger = loggingService();
 	}
 
 	/**
@@ -25,12 +25,15 @@ class MongoService {
 	initialize() {
 		try {
 			console.log('Mongo Initialize');
-			let hostName = config.get('database.mongo.hostName');
+			let mongodbURI = config.get('database.mongo.uri');
+			if (!_.isNil(process.env.MONGO_DB_HOST) && !_.isNil(process.env.MONGO_DB_PORT) && !_.isNil(process.env.MONGO_DB_NAME)) {
+				mongodbURI = 'mongodb://' + process.env.MONGO_DB_HOST + ':' + process.env.MONGO_DB_PORT + '/' + process.env.MONGO_DB_NAME;
+			}
 			if(process.env.NODE_ENV === 'production') {
 				let auth = process.env.MONGO_USERNAME + ':' + process.env.MONGO_PASSWORD;
 				let connectionString = process.env.MONGO_URLS + '/' + process.env.MONGO_DB_NAME + '?readPreference=secondary&replicaSet=' + process.env.MONGO_REPLICA_SET;
-				loggingService.getDefaultLogger().info('[MONGODB]-[CONNECTION]-INFO: Mongo connection string: ' + connectionString);
-				hostName = 'mongodb://' + auth + '@' + connectionString;
+				loggingService.info('[MONGODB]-[CONNECTION]-INFO: Mongo connection string: ' + connectionString);
+				mongodbURI = 'mongodb://' + auth + '@' + connectionString;
 			}
 			// Set up default mongoose connection
 			let options = {
@@ -49,15 +52,15 @@ class MongoService {
 					authdb: 'admin'
 				}
 			}
-			console.log('hostName :', hostName);
+			console.log('mongodbURI :', mongodbURI);
 			mongoose.set('useCreateIndex', true);
-			mongoose.connect(hostName, options, function (error) {
-				console.log('Connect :', hostName);
+			mongoose.connect(mongodbURI, options, function (error) {
+				console.log('Connect :', mongodbURI);
 				if (error) {
 					console.log(error);
-					loggingService.getDefaultLogger().error('[MONGODB]-[CONNECTION]-ERROR: MongoDB CONNECT error: ');
+					loggingService.error('[MONGODB]-[CONNECTION]-ERROR: MongoDB CONNECT error: ');
 				}
-				loggingService.getDefaultLogger().info('[MONGODB]-[CONNECTION]-INFO: MongoDB CONNECT Successful: ');
+				loggingService.info('[MONGODB]-[CONNECTION]-INFO: MongoDB CONNECT Successful: ');
 			});
 
 			// Get Mongoose to use the global promise library
@@ -66,37 +69,37 @@ class MongoService {
 			// Bind listeners to mongo connection events
 			mongoose.connection.on("connecting", (ref) => {
 					//this.logger.info('[MONGODB]-[CONNECTION]-INFO: Connecting to MongoDB', JSON.stringify(ref));
-				loggingService.getDefaultLogger().info('[MONGODB]-[CONNECTION]-INFO: Connecting to MongoDB');
+				loggingService.info('[MONGODB]-[CONNECTION]-INFO: Connecting to MongoDB');
 			});
 			mongoose.connection.on("connected", (ref) => {
-				loggingService.getDefaultLogger().info('[MONGODB]-[CONNECTION]-INFO: Connected to MongoDB');
+				loggingService.info('[MONGODB]-[CONNECTION]-INFO: Connected to MongoDB');
 			});
 
 			mongoose.connection.once("open", (ref) => {
-				loggingService.getDefaultLogger().info('[MONGODB]-[CONNECTION]-INFO: Connection opened');
+				loggingService.info('[MONGODB]-[CONNECTION]-INFO: Connection opened');
 			});
 
 			mongoose.connection.on("reconnected", (ref) => {
-				loggingService.getDefaultLogger().info('[MONGODB]-[CONNECTION]-INFO: Reconnected');
+				loggingService.info('[MONGODB]-[CONNECTION]-INFO: Reconnected');
 			});
 
 			mongoose.connection.on("error", (error) => {
-				loggingService.getDefaultLogger().error('[MONGODB]-[CONNECTION]-ERROR: MongoDB Error: ', JSON.stringify(error));
+				loggingService.error('[MONGODB]-[CONNECTION]-ERROR: MongoDB Error: ', JSON.stringify(error));
 			});
 
 			mongoose.connection.on("disconnected", (ref) => {
-				loggingService.getDefaultLogger().error('[MONGODB]-[CONNECTION]-ERROR: MongoDB Disconnected: ', JSON.stringify(ref));
+				loggingService.error('[MONGODB]-[CONNECTION]-ERROR: MongoDB Disconnected: ', JSON.stringify(ref));
 
 				setTimeout(() => {
-					mongoose.connect(hostName, options);
+					mongoose.connect(mongodbURI, options);
 				}, 250);
 			});
 
 		} catch (ex) {
 			console.log(ex);
-			loggingService.getDefaultLogger().error('[MONGODB]-[CONNECTION]-ERROR: MongoDB CONNECT exception: ' + JSON.stringify(ex));
+			loggingService.error('[MONGODB]-[CONNECTION]-ERROR: MongoDB CONNECT exception: ' + JSON.stringify(ex));
 		} finally {
-			loggingService.getDefaultLogger().info('[MONGODB]-[CONNECTION]-INFO: Leaving MongoDB CONNECT block');
+			loggingService.info('[MONGODB]-[CONNECTION]-INFO: Leaving MongoDB CONNECT block');
 		}
 	}
 

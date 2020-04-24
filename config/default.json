@@ -5,7 +5,7 @@
       "keyspace": "message"
     },
     "mongo": {
-      "hostName": "mongodb://localhost:27017/designdb"
+      "uri": "mongodb://localhost:27017/designdb"
     }
   },
   "sessionDatabase": {

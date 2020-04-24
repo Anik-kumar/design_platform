@@ -200,50 +200,46 @@ router.post('/verify-email', async function(req, res, next) {
 router.post('/reset-pass', async function(req, res, next) {
 	let response = {};
 	console.log(req.body.token);
+	let isFound;
 
 	try {
-		const result = await jwtService.verifyHS256(req.body.token, { 'expiresIn' : 10*60 });
-		console.log("AuthRoute +> ", result);
+		// const result = await jwtService.verifyHS256(req.body.token, { 'expiresIn' : 10*60 });
+		// console.log("AuthRoute +> ", result);
+		const email = req.body.email;
+		const pass = req.body.password;
 
-		if(result.success && !_.isNil(result.data.email) && !_.isEmpty(result.data.email)) {
-			const userMail = result.data.email;
-			const userPass = req.body.pass;
-			let isFound = await userService.verifyResetPass(userMail, userPass);
+		if(!_.isNil(email) && !_.isEmpty(email) && !_.isNil(pass) && !_.isEmpty(pass)) {
+			// const userMail = result.data.email;
+			const encryptPass = await bcrypt.hash(pass, saltRounds);
+			isFound = await authService.resetPassword(email, encryptPass);
+			
 			console.log("---> AuthRouter => ", isFound);
 
-			if(isFound.success) {
+			if(isFound.success && isFound.error==null) {
 				response.message = "User password updated";
 				response.success = true;
 				response.error = null;
+				response.result = isFound.result;
 			} else {
 				response.message = "User password not updated";
 				response.success = false;
 				response.error = isFound.error;
+				response.result = isFound.result;
 			}
-
+			res.status(200);
 		}
-
+		
 	} catch(err) {
 		console.log(err);
-		if(err.message == "jwt expired" && err.expiredAt.length > 0) {
-			response.message = "Token is expired";
-			response.success = false;
-			response.error = "TokenExpiredError";
-		}
+		response.message = "Exception Error in AuthenticationRouter /reset-pass";
+		response.success = false;
+		response.error = err;
+		response.result = isFound.result;
+		res.status(500); // Internal server error
 	}
-
-  res.status(200);
-
-
-//{ data: {
-//    email: "anik.kumar.sarker@gmail.com"
-//    iat: 1586534375
-//    exp: 1586534975
-//    aud: "Client_Identity"
-//    iss: "pijus.me"
-//    sub: "admin@pijus.me"
-//    }
-//  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.	eyJlbWFpbCI6ImFuaWsua3VtYXIuc2Fya2VyQGdtYWlsLmNvbSIsImlhdCI6MTU4NjUzNDM3NSwiZXhwIjoxNTg2NTM0OTc1LCJhdWQiOiJDbGllbnRfSWRlbnRpdHkiLCJpc3MiOiJwaWp1cy5tZSIsInN1YiI6ImFkbWluQHBpanVzLm1lIn0.1IuxjLfEdp9XH-43RfD0nE2ak6Oz7gbnp-o_MZ800Wk"
+	
+  
+  
 
   console.log("---> AuthRouter => ", response);
   res.send(response);

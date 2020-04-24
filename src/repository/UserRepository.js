@@ -14,7 +14,7 @@ module.exports = class UserRepository {
         "pass": pass
       }).exec();
     } catch (ex) {
-      loggerService.getDefaultLogger().error('[UserRepository]-ERROR: Exception at getUser(): ' + JSON.stringify(ex));
+      loggerService.error({message: '[UserRepository]-ERROR: Exception at getUser(): ', error: ex});
       success = false;
     }
 
@@ -32,7 +32,7 @@ module.exports = class UserRepository {
         "email": email
       }).exec();
     } catch (ex) {
-      loggerService.getDefaultLogger().error('[UserRepository]-ERROR: Exception at getUser(): ' + JSON.stringify(ex));
+      loggerService.error({message: '[UserRepository]-ERROR: Exception at getUser(): ', error: ex});
       success = false;
     }
 
@@ -41,8 +41,6 @@ module.exports = class UserRepository {
       success: success
     }
   }
-
-
 
 
   static async createUser(unique_id, email, pass, userType, firstName, lastName, phone, gender, dob) {
@@ -97,6 +95,7 @@ module.exports = class UserRepository {
     }
   }
 
+
   static async findOne(filter) {
     let success = true;
     let result = {};
@@ -105,7 +104,7 @@ module.exports = class UserRepository {
     try{
       result = await Users.findOne(filter).exec();
     } catch(ex) {
-      loggerService.getDefaultLogger().error('[UserRepository]-ERROR: Exception at find(): ' + JSON.stringify(ex));
+      loggerService.error({message: '[UserRepository]-ERROR:  Exception at find(): ', error: ex});
       success = false;
     }
 
@@ -120,14 +119,13 @@ module.exports = class UserRepository {
   static async findUserByEmail(email) {
     let success = true;
     let result = {};
-    console.log("From UserRepository => ", email);
 
     try{
       result = await Users.findOne({
         "email" : email
       }).exec();
     } catch(ex) {
-      loggerService.getDefaultLogger().error('[UserRepository]-ERROR: Exception at findUser(): ' + JSON.stringify(ex));
+      loggerService.error({message: '[UserRepository]-ERROR: Exception at findUser(): ', error: ex});
       success = false;
     }
 
@@ -166,8 +164,9 @@ module.exports = class UserRepository {
     try {
       result = await Users.updateOne(filter, { $set: updateObj});
     } catch(ex) {
-      loggerService.getDefaultLogger().error('[UserRepository]-ERROR: Exception at update(): ' + (ex.message || ''));
+      loggerService.error({message: '[UserRepository]-ERROR: Exception at update(): ', error: ex});
       success = false;
+
     }
 
     return {
