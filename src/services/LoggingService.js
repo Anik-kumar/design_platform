@@ -4,6 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
+const _ = require('lodash');
 
 class LoggingService {
 	constructor() {
@@ -52,6 +53,28 @@ class LoggingService {
 	getDefaultLogger() {
 		return this.logger;
 	}
+
+	error(errorObj) {
+		try {
+			let message = '[Timestamp: ' + (new Date().toISOString()) + '] ';
+			if (!_.isNil(errorObj.message)) {
+				message = errorObj.message;
+			}
+			if (!_.isNil(errorObj.error) && errorObj.error instanceof Error) {
+				message += errorObj.error.message;
+				if (!_.isNil(errorObj.error.stack)) {
+					message += errorObj.error.stack;
+				}
+			}
+			this.logger.error(message);
+		} catch (e) {
+			console.log('Error in Logging, ', e);
+		}
+	}
+	info(message) {
+		this.logger.info('[Timestamp: ' + (new Date().toISOString()) + '] ' + message);
+	}
+
 }
 
 const loggingService = new LoggingService;

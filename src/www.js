@@ -6,13 +6,14 @@
 
 var app = require('./app');
 var debug = require('debug')('advancednodeexpress:server');
-const cluster = require('cluster');
 const http = require('http');
 var configLoader = require('./config/ConfigLoader');
-const numCPUs = require('os').cpus().length;
+var path = require('path');
 
 // Load Node-config
 let config = new configLoader();
+process.env['SOURCE_PATH'] = path.resolve(__dirname);
+process.env['ROOT_PATH'] = process.env['SOURCE_PATH'].substring(0, process.env['SOURCE_PATH'].lastIndexOf("/src"));
 
 /**
  * Get port from environment and store in Express.
@@ -55,10 +56,25 @@ function normalizePort(val) {
     return false;
 }
 
-process.on('unhandledRejection', error => {
+const unhandledRejections = new Map();
+// In synchronous code, the 'uncaughtException' event is emitted when the list of unhandled exceptions grows.
+// In asynchronous code, the 'unhandledRejection' event is emitted when the list of unhandled rejections grows,
+// and the 'rejectionHandled' event is emitted when the list of unhandled rejections shrinks.
+// The unhandledRejections Map will grow and shrink over time, reflecting rejections that start unhandled and then become handled
+process.on('unhandledRejection', (reason, promise) => {
+    unhandledRejections.set(promise, reason);
+}, error => {
     // Will print "unhandledRejection err is not defined"
     console.log('unhandledRejection >>>> ', error);
 });
+process.on('rejectionHandled', (promise) => {
+    unhandledRejections.delete(promise);
+});
+
+process.on('uncaughtException', (err, origin) => {
+    console.log('uncaughtException >>>> ', err);
+});
+
 /**
  * Event listener for HTTP server "error" event.
  */
