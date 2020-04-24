@@ -78,7 +78,10 @@ app.use(function(err, req, res, next) {
 
 	// render the error page
 	res.status(err.status || 500);
-	res.render('error');
+	if (err) {
+		console.log(err);
+	}
+	res.send("Internal error, Please try again.");
 });
 
 module.exports = app;

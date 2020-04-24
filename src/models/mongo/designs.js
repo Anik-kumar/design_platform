@@ -4,16 +4,45 @@ const mongoose = mongoService.getClient();
 
 const schema = new mongoose.Schema({
 	id: mongoose.Schema.Types.ObjectId,
-	design_name: String,
-	design_photos: [],
+	user_unique_id: { type: String, index: true, required: true },
+	design_id: { type: String, index: true, required: true },
+	title: String,
+	type: { type: String, required: true },
+	raw_design: {
+		file_name: String,
+		file_size: Number,
+		public_url: { type: String, required: true },
+		description: String,
+		title: String,
+		likes: Number,
+		tag: []
+	},
+	photos: [{
+		file_name: String,
+		file_size: Number,
+		public_url: String,
+		description: String,
+		title: String,
+		likes: Number,
+		tag: []
+	}],
 	likes: Number,
 	comment: [{
 		user_uuid: String,
 		text: String
 	}],
 	votes: Number,
-	tags: []
+	tags: [],
+	date_created: {
+		type: Date,
+		// `Date.now()` returns the current unix timestamp as a number
+		default: Date.now
+	},
+	updated_at: {
+		type: Date,
+		// `Date.now()` returns the current unix timestamp as a number
+		default: Date.now
+	}
 });
 
-
-module.exports = mongoose.model('Designs', schema);
+module.exports = mongoose.model('Design', schema);
