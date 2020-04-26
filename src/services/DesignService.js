@@ -2,27 +2,33 @@ const _ = require('lodash');
 const designRepository = require('../repository/DesignRepository');
 
 module.exports = class DesignService {
-    constructor() {
+  constructor() {
 
+  }
+
+
+  static async create(designObj) {
+    let result = {}, success = false, error = null;
+    try {
+      result = await designRepository.createDesign(designObj.userId, designObj.designId, designObj.title, designObj.type, designObj.fileSize, designObj.tags, designObj.url ,designObj.description);
+      if (result.success && !_.isNil(result.data)) {
+        console.log('Design creation Successful');
+        success = true;
+      } else {
+        console.log('Design is not created');
+        success = false;
+        error = "DesignNotCreated";
+      }
+    }catch (ex) {
+      loggerService.error({message: '[DesignService]-ERROR: Exception at sigup(): ', error: ex});
+      success = false;
+      error = ex;
     }
 
-
-    static async create(designObj) {
-        let result = {}, success = true, token = '';
-        try {
-           result = await designRepository.createDesign(designObj.user_id, designObj.design_id, designObj.title, designObj.type, designObj.file_name, designObj.file_size, designObj.public_url, designObj.description);
-            if (result.success) {
-                console.log('Design creation Successful');
-            }
-        }catch (ex) {
-            loggerService.error({message: '[DesignService]-ERROR: Exception at sigup(): ', error: ex});
-            success = false;
-        }
-
-        return {
-            data: result.data,
-            token: token,
-            success: success
-        }
+    return {
+      data: result.data,
+      error: error,
+      success: success
     }
+  }
 }

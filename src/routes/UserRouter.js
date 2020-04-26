@@ -94,6 +94,30 @@ router.post('/send-reset-pass', async function(req, res, next) {
 });
 
 
+router.post('/new-design', async function(req, res, next){
+  let response = {};
+	console.log(req.body.email);
+
+	try{
+    const result = await userService.uploadDesign(req.body.postTitle, req.body.title, req.body.type, req.body.tags, req.body.description);
+    
+    if(result.success && _.isNil(result.error) && _.isEmpty(result.error)) {
+      response.message = "User reset password verification is sent";
+      response.success = true;
+      response.error = null;
+    } else {
+      response.message = "User password not updated";
+      response.success = false;
+      response.error = result.error;
+    }
+	} catch (err) {
+		console.log(err);
+  }
+  
+  res.send(response);
+});
+
+
 
 
 

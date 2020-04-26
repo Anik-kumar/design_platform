@@ -6,23 +6,22 @@ const schema = new mongoose.Schema({
 	id: mongoose.Schema.Types.ObjectId,
 	user_unique_id: { type: String, index: true, required: true },
 	design_id: { type: String, index: true, required: true },
-	title: String,
+	title: { type: String, index: true, required: true },
+	description: String,
 	type: { type: String, required: true },
 	raw_design: {
-		file_name: String,
+		title: String,
 		file_size: Number,
 		public_url: { type: String, required: true },
 		description: String,
-		title: String,
 		likes: Number,
 		tag: []
 	},
 	photos: [{
-		file_name: String,
+		title: String,
 		file_size: Number,
 		public_url: String,
 		description: String,
-		title: String,
 		likes: Number,
 		tag: []
 	}],

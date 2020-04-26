@@ -170,17 +170,42 @@ var testNav = [
           },
           "subMenu": []
         }, {
-            "name": "New design",
+            "name": "Design",
             "active": false,
             "collapsed": true,
             "route": "/design",
-            "icon": "plus",
+            "icon": "figma",
             "style": {
               "height": "0px",
               "padding-top": "0px"
             },
-            "subMenu": []
-        }, {
+            "subMenu": [
+              {
+                "name": "Create",
+                "active": false,
+                "collapsed": true,
+                "route": "/design/new",
+                "icon": "plus",
+                "badge": "",
+                "style": {
+                  "height": "0px",
+                  "padding-top": "0px"
+                },
+              },
+              {
+                "name": "My Designs",
+                "active": false,
+                "collapsed": true,
+                "route": "/design/list",
+                "icon": "image",
+                "badge": "",
+                "style": {
+                  "height": "0px",
+                  "padding-top": "0px"
+                },
+              }
+            ]
+        } /*, {
         "name": "Show design",
         "active": false,
         "collapsed": true,
@@ -191,7 +216,8 @@ var testNav = [
           "padding-top": "0px"
         },
         "subMenu": []
-      }]
+      } */
+      ]
     }];
 
 

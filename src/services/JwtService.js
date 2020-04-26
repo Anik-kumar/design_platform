@@ -10,7 +10,6 @@ var publicKEY  = fs.readFileSync('./cert/public.key', 'utf8');
 
 module.exports =  class JwtService {
 	constructor(){
-
 	}
 
 	static async sign(data, options) {

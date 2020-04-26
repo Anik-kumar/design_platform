@@ -356,4 +356,53 @@ module.exports = class UserService {
 
 	}
 
+	/**
+	 * Updates user password
+	 * @param {string} userEmail 
+	 * @param {string} userPass 
+	 * @return { Promise<{error: string, success: boolean}>}
+	 */
+	static async uploadDesign(postTitle, title, type, tags, description) {
+		let result;
+    let found = true;
+		let err = '';
+		let updateUser;
+
+    try{
+      result = await userRepository.findOne({'email': userEmail, 'verification.is_reset_pass_active': true});
+
+      if(result.success) {
+
+				updateUser = await userRepository.updateOne({
+					'email': userEmail,
+					'verification.is_reset_pass_active': true
+				}, {
+					'pass': userPass,
+					'verification.is_reset_pass_active': false
+				});
+
+				if(updateUser.success) {
+					found = true;
+					console.log('UserService>>  User verify status updated');
+				}else {
+					found = false;
+					console.log('UserService>>  User verify status update failed');
+				}
+      }else {
+				found = false;
+				console.log('UserService>>  User not found');
+      }
+    } catch (e) {
+      console.log("Exception error in verifyUserEmail() in UserService. " + e);
+      found = false;
+			err = e;
+    }
+
+    return {
+      error: err,
+      success: found
+		}
+
+	}
+
 };
