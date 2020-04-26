@@ -62,6 +62,11 @@ router.get('/navigations', async function(req, res, next) {
 		console.log('Token: ', token);
 		if (!_.isNil(token)) {
 			token = token.replace('Bearer ',''); 
+			
+		} else {
+			return res.status(401).send({
+				message: 'Unauthorized Access. Please Signin'
+			});
 		}
 		const userData = await jwtService.verify(token);
 		const user_unique_id = userData.unique_id;
