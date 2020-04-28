@@ -79,6 +79,36 @@ module.exports =  class JwtService {
 		});
 	}
 
+	static verifySync(token) {
+		
+			try {
+				var verifyOptions = {
+					issuer: "pijus.me",
+					subject: "admin@pijus.me",
+					audience:  'Client_Identity',
+					algorithms:  ["RS256"]
+				};
+
+				try{
+
+					var decoded = jwt.verify(token, privateKEY, verifyOptions);
+					return {
+						data: decoded,
+						token: token,
+						success: true
+					};
+				} catch(error) {
+					loggingService.error({message: '[JwtService]-ERROR: Error at verifySync(): ', error: error});
+					throw error;
+				}
+
+			} catch (ex) {
+				loggingService.error({message: '[JwtService]-ERROR: Error at verifySync(): ', error: ex});
+				throw ex;
+			}
+		
+	}
+
 
 	static async signHS256(data, options) {
 		return new Promise ((resolve, reject) => {

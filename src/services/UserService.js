@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 
 const Users = require('../models/mongo/users');
 const userRepository = require('../repository/UserRepository');
+const designRepository = require('../repository/DesignRepository');
 
 const jwtService = require('../services/JwtService');
 const loggerService = require('../services/LoggingService');
@@ -401,6 +402,42 @@ module.exports = class UserService {
     return {
       error: err,
       success: found
+		}
+
+	}
+
+
+	/**
+	 * Updates user password
+	 * @param {string} userEmail 
+	 * @param {string} userPass 
+	 * @return { Promise<{error: string, success: boolean}>}
+	 */
+	static async getDesigns(userId) {
+		let result;
+    let found = true;
+		let err = '';
+
+    try{
+      result = await designRepository.findAll({ 'user_unique_id': userId });
+
+      if(result.success) {
+				found = true;
+				console.log("UserService>> Designs: ", result.result);
+      }else {
+				found = false;
+				console.log('UserService>>  User not found');
+      }
+    } catch (e) {
+      console.log("Exception error in verifyUserEmail() in UserService. " + e);
+      found = false;
+			err = e;
+    }
+
+    return {
+      error: err,
+			success: found,
+			data: result
 		}
 
 	}

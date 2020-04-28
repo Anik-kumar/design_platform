@@ -116,6 +116,27 @@ module.exports = class UserRepository {
   }
 
 
+  static async findAll(filter) {
+    let success = true;
+    let result;
+    console.log("From UserRepository => ", filter);
+
+    try{
+      result = await Users.find(filter).exec();
+      
+    } catch(ex) {
+      loggerService.error({message: '[UserRepository]-ERROR:  Exception at findAll(): ', error: ex});
+      success = false;
+    }
+
+
+    return {
+      success: success,
+      result: result
+    }
+  }
+
+
   static async findUserByEmail(email) {
     let success = true;
     let result = {};
@@ -174,6 +195,9 @@ module.exports = class UserRepository {
       result: result
     }
   }
+
+
+
 
 
 };
