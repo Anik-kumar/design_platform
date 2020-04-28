@@ -22,17 +22,22 @@ function InterceptRequest(req, res, next) {
         let token = req.headers['authorization'] || null;
         if(!_.isNil(token)) {
             token = token.replace('Bearer ', '');
-            try{
-                jwtService.verify(token).then(result => {
-                    if(!_.isNil(result) && !_.isNil(result.data)){
-                        req['user_id'] = result.data.unique_id;
-                        console.log('Interceptor -> user_id ', req['user_id']);
-                    }
-                }).catch(error => {
-                    console.log(error);
-                })
+            try {
+                let result = jwtService.verifySync(token);
+                if(!_.isNil(result) && !_.isNil(result.data)){
+                    req['user_id'] = result.data.unique_id;
+                    console.log('Interceptor -> user_id ', req['user_id']);
+                }
+                // jwtService.verify(token).then(result => {
+                //     if(!_.isNil(result) && !_.isNil(result.data)){
+                //         req['user_id'] = result.data.unique_id;
+                //         console.log('Interceptor -> user_id ', req['user_id']);
+                //     }
+                // }).catch(error => {
+                //     console.log(error);
+                // })
                 
-            }catch(err) {
+            } catch(err) {
                 console.log("Token verification failed ->", err);
             }
             

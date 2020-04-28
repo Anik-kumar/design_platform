@@ -1,6 +1,6 @@
-var Designs = require('../models/mongo/designs');
-var _ = require('lodash');
-var loggerService = require('../services/LoggingService');
+const Designs = require('../models/mongo/designs');
+const _ = require('lodash');
+const loggerService = require('../services/LoggingService');
 
 module.exports = class UserRepository {
 
@@ -35,7 +35,7 @@ module.exports = class UserRepository {
         likes: 0,
         comment: [],
         votes: 0,
-        tags: []
+        tags: tags
       };
       result = await Designs.create(udesignObj);
       success = true;
@@ -47,6 +47,79 @@ module.exports = class UserRepository {
     return {
       data: result,
       success: success
+    }
+  }
+
+  /**
+   * returns all designs of user
+   * @param {string} filter user id to search design
+   */
+  static async findDesgins(filter) {
+    let success = true;
+    let result;
+    console.log("From DesignRepository => ", filter);
+
+    try{
+      result = await Designs.find({
+        "user_unique_id": filter
+      }).exec();
+      
+    } catch(ex) {
+      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findDesigns(): ', error: ex});
+      success = false;
+    }
+
+
+    return {
+      success: success,
+      result: result
+    }
+  }
+
+  /**
+   * returns one design of user
+   * @param {object} filter obj to search
+   */
+  static async findOne(filter) {
+    let success = true;
+    let result = {};
+    console.log("From DesignRepository => ", filter);
+
+    try{
+      result = await Designs.findOne(filter).exec();
+    } catch(ex) {
+      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at find(): ', error: ex});
+      success = false;
+    }
+
+
+    return {
+      success: success,
+      result: result
+    }
+  }
+
+  /**
+   * returns all designs of user
+   * @param {object} filter oject to search
+   */
+  static async findAll(filter) {
+    let success = true;
+    let result;
+    console.log("From DesignRepository => ", filter);
+
+    try{
+      result = await Designs.find(filter).exec();
+      
+    } catch(ex) {
+      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findAll(): ', error: ex});
+      success = false;
+    }
+
+
+    return {
+      success: success,
+      result: result
     }
   }
 

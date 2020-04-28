@@ -118,6 +118,41 @@ router.post('/new-design', async function(req, res, next){
 });
 
 
+router.get('/get-designs', async (req, res, next) => {
+  let response = {};
+  console.log("getdesigns => ", req.user_id);
+  if(_.isNil(req.user_id)) {
+    return res.status(401).send({
+      message: "Unauthorized Access"
+    });
+  }
+  try{
+    const result = await userService.getDesigns(req.user_id);
+    console.log('Get Design Result', result);
+    if(result.success && !_.isNil(result.error)) {
+      response.data = result.data;
+      response.message = "User designs is retrived";
+      response.error = null;
+      response.success = true;
+    }else {
+      response.data = result.data;
+      response.message = "User designs is NOT retrived";
+      response.error = "Error in getDesignsRouter";
+      response.success = false;
+    }
+    res.status(200);
+  } catch(error) {
+    console.log("Exception error in UserRouter /get-designs. ", error);
+    response.message = "Exception error in /get-designs";
+    response.error = error;
+    response.success = false;
+  }
+
+  return res.send(response);
+
+});
+
+
 
 
 

@@ -10,7 +10,7 @@ module.exports = class DesignService {
   static async create(designObj) {
     let result = {}, success = false, error = null;
     try {
-      result = await designRepository.createDesign(designObj.userId, designObj.designId, designObj.title, designObj.type, designObj.fileSize, designObj.tags, designObj.url ,designObj.description);
+      result = await designRepository.createDesign(designObj.userId, designObj.designId, designObj.title, designObj.type, designObj.fileSize, designObj.tags, designObj.url ,designObj.des);
       if (result.success && !_.isNil(result.data)) {
         console.log('Design creation Successful');
         success = true;
