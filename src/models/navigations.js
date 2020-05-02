@@ -203,6 +203,18 @@ var testNav = [
                   "height": "0px",
                   "padding-top": "0px"
                 },
+              },
+              {
+                "name": "Show Design",
+                "active": false,
+                "collapsed": true,
+                "route": "/design/show/:title",
+                "icon": "image",
+                "badge": "",
+                "style": {
+                  "height": "0px",
+                  "padding-top": "0px"
+                },
               }
             ]
         } /*, {
