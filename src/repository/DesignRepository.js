@@ -25,12 +25,12 @@ module.exports = class UserRepository {
           tag: tags
         },
         photos: [{
-          title: title,
-          file_size: file_size,
-          public_url: public_url,
-          description: description,
+          title: "",
+          file_size: 0,
+          public_url: "",
+          description: "",
           likes: 0,
-          tag: tags
+          tag: []
         }],
         likes: 0,
         comment: [],
@@ -63,6 +63,10 @@ module.exports = class UserRepository {
       result = await Designs.find({
         "user_unique_id": filter
       }).exec();
+      console.log("From DesignRepository result => ", result);
+      if(!result) {
+        success = false;
+      }
       
     } catch(ex) {
       loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findDesigns(): ', error: ex});
@@ -87,15 +91,19 @@ module.exports = class UserRepository {
 
     try{
       result = await Designs.findOne(filter).exec();
+      console.log("From DesignRepository result => ", result);
+      if(!result) {
+        success = false;
+      }
     } catch(ex) {
-      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at find(): ', error: ex});
+      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findOne(): ', error: ex});
       success = false;
     }
 
 
     return {
       success: success,
-      result: result
+      data: result
     }
   }
 
@@ -110,6 +118,10 @@ module.exports = class UserRepository {
 
     try{
       result = await Designs.find(filter).exec();
+      console.log("From DesignRepository result => ", result);
+      if(!result) {
+        success = false;
+      }
       
     } catch(ex) {
       loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findAll(): ', error: ex});
