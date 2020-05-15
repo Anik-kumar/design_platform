@@ -423,7 +423,8 @@ module.exports = class UserService {
 
       if(result.success) {
 				found = true;
-				console.log("UserService>> Designs: ", result.result);
+				// console.log("UserService>> Designs: ", result.result);
+				console.log("UserService>> Designs retirved ");
       }else {
 				found = false;
 				console.log('UserService>>  User not found');

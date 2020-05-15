@@ -8,7 +8,7 @@ module.exports = function upload(req, res) {
     // Do something with the file
     // e.g. save it to the database
     // you can access it using file.path
-    console.log('file', file.name);
+    console.log('file -> ', file.name);
     const readStream = fs.createReadStream(file.path);
   });
   form.on('end', () => {

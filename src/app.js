@@ -21,6 +21,7 @@ const userRoutes = require('./routes/UserRouter');
 const emailRouter = require('./routes/EmailRouter');
 const filesRouter = require('./routes/FilesRouter');
 const tokenRouter = require('./routes/TokenRouter');
+const designRouter = require('./routes/DesignRouter');
 
 const ConfigLoader = require('./config/ConfigLoader');
 const config = new ConfigLoader();
@@ -50,13 +51,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(interceptRequest);
 
 // route middlewares
-// app.use('/', indexRoutes);
 app.use('/api/auth', authenticationRouter);
 app.use('/api/authorize', authorizationRouter);
 app.use('/api/user', userRoutes);
 app.use('/api/email', emailRouter);
 app.use('/api/files', filesRouter);
 app.use('/api/token', tokenRouter);
+app.use('/api/design', designRouter);
 
 
 app.use('/', indexRoutes);
