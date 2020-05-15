@@ -6,14 +6,15 @@ module.exports = class UserRepository {
 
   constructor() { }
 
-  static async createDesign(user_id, design_id, title, type, file_size, tags, public_url, description) {
+  static async createDesign(user_id, design_id, title, titlePath, type, file_size, tags, public_url, description, key, awsName) {
     let result = {}, success = false;
-    console.log('userRepo -> ', user_id,design_id,title,type,file_size,tags,public_url,description);
+    console.log('userRepo -> ', user_id,design_id,title,titlePath,type,file_size,tags,public_url,description,key,awsName);
     try {
       let udesignObj = {
         user_unique_id: user_id,
         design_id: design_id,
         title: title,
+        title_path: titlePath,
         description: description,
         type: type,
         raw_design: {
@@ -22,7 +23,9 @@ module.exports = class UserRepository {
           public_url: public_url,
           description: description,
           likes: 0,
-          tag: tags
+          tag: tags,
+          key: key,
+          aws_name: awsName
         },
         photos: [{
           title: "",
@@ -30,7 +33,9 @@ module.exports = class UserRepository {
           public_url: "",
           description: "",
           likes: 0,
-          tag: []
+          tag: [],
+          key: "",
+          aws_name: ""
         }],
         likes: 0,
         comment: [],
@@ -132,6 +137,45 @@ module.exports = class UserRepository {
     return {
       success: success,
       result: result
+    }
+  }
+
+
+
+  static async updateDesign(user_id, design_id, title, type,size, tags,link,description, key, awsName) {
+    let result = {}, success = false;
+    console.log('userRepo -> ', user_id,design_id,title,type,size,tags,link,description,key,awsName);
+    try {
+      let udesignObj = {
+        "title": title,
+        "description": description,
+        "type": type,
+        "tags": tags,
+        "raw_design.title": title,
+        "raw_design.description": description,
+        "raw_design.tag": tags,
+        "raw_design.key": key,
+        "raw_design.aws_name": awsName,
+        "raw_design.public_url": link,
+        "raw_design.file_size": size
+      };
+      result = await Designs.findOneAndUpdate(
+        {
+          'user_unique_id': user_id,
+          'design_id': design_id
+        },
+        { $set: udesignObj },
+        { useFindAndModify: false }
+      );
+      success = true;
+    } catch (ex) {
+      loggerService.error({message: '[UserRepository]-ERROR: Exception at updateDesign(): ', error: ex});
+      success = false;
+    }
+
+    return {
+      data: result,
+      success: success
     }
   }
 

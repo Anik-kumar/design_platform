@@ -19,7 +19,7 @@ AWS.config.update({region: process.env.AWS_REGION});
 // Create S3 service object
 s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
-// Create the parameters for calling listObjects
+// Create theuploadParams parameters for calling listObjects
 var uploadParams = {
   Bucket : process.env.S3_DESIGN_BUCKET,
   Key: '',
@@ -92,9 +92,37 @@ class S3Service {
       }
     });
   }
+
+
+  static async delete(keyName) {
+    return new Promise((resolve, reject) => {
+      try{
+        
+        let deleteParams = {
+          Bucket : process.env.S3_DESIGN_BUCKET,
+          Key: keyName,
+          ACL:'public-read-write'
+        };
+        let deleteObjResquest = { Bucket: uploadParams.Bucket, Key: keyName};
+        s3.deleteObject(deleteParams, function (err, data) {
+          if (err) {
+            loggingService.error({message: '[S3 SERVICE]-ERROR: Error in S3 delete() function.', error: err});
+            console.log(err, err.stack);
+            reject(err);
+          } if (data) {
+            loggingService.info('[S3 SERVICE]-INFO: Delete Success. Image Location: ' + data.Location);
+            resolve(data);
+          }
+        });
+      } catch(err) {
+        console.log("Exception in S3service ", err);
+      }
+    })
+  }
 }
 
 module.exports = {
   upload: S3Service.upload,
-  readFile: S3Service.readFile
+  readFile: S3Service.readFile,
+  delete: S3Service.delete
 }

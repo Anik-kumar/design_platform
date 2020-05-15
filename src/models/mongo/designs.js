@@ -7,6 +7,7 @@ const schema = new mongoose.Schema({
 	user_unique_id: { type: String, index: true, required: true },
 	design_id: { type: String, index: true, required: true },
 	title: { type: String, index: true, required: true },
+	title_path: {type: String, index: true, required: true},
 	description: String,
 	type: { type: String, required: true },
 	raw_design: {
@@ -15,7 +16,9 @@ const schema = new mongoose.Schema({
 		public_url: { type: String, required: true },
 		description: String,
 		likes: Number,
-		tag: []
+		tag: [],
+		key: String,
+		aws_name: String
 	},
 	photos: [{
 		title: String,
@@ -23,7 +26,9 @@ const schema = new mongoose.Schema({
 		public_url: String,
 		description: String,
 		likes: Number,
-		tag: []
+		tag: [],
+		key: String,
+		aws_name: String
 	}],
 	likes: Number,
 	comment: [{
