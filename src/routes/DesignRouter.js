@@ -147,4 +147,41 @@ router.post('/update', async (req, res, next) => {
 });
 
 
+router.get('/details/:title', async (req, res, next) => {
+  const title = req.params.title;
+  let response = {};
+  console.log("/details/:title => ", req.user_id);
+  console.log("/details/:title ", title);
+  if(_.isNil(req.user_id)) {
+    return res.status(401).send({
+      message: "Unauthorized Access"
+    });
+  }
+
+  try {
+    const result = await designService.findOne({"user_unique_id": req.user_id, "title_path": title});
+    console.log('Get Design Result', result);
+    if(result.success && _.isNil(result.error)) {
+      response.data = result.data;
+      response.message = "User design is retrived";
+      response.error = null;
+      response.success = true;
+    }else {
+      response.data = result.data;
+      response.message = "User design is NOT retrived";
+      response.error = "Error in getDesignsRouter";
+      response.success = false;
+    }
+    res.status(200);
+  } catch(error) {
+    console.log("Exception error in UserRouter /details/:title. ", error);
+    response.message = "Exception error in /details/:title ";
+    response.error = error;
+    response.success = false;
+  }
+
+  return res.send(response);
+});
+
+
 module.exports = router;
