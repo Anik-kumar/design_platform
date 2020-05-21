@@ -203,32 +203,55 @@ var testNav = [
                   "height": "0px",
                   "padding-top": "0px"
                 },
-              },
-              {
-                "name": "Show Design",
-                "active": false,
-                "collapsed": true,
-                "route": "/design/show/:title",
-                "icon": "image",
-                "badge": "",
-                "style": {
-                  "height": "0px",
-                  "padding-top": "0px"
-                },
               }
             ]
-        } /*, {
-        "name": "Show design",
+        }, {
+        "name": "Profile",
         "active": false,
         "collapsed": true,
-        "route": "/design/list",
         "icon": "image",
         "style": {
           "height": "0px",
           "padding-top": "0px"
         },
-        "subMenu": []
-      } */
+        "subMenu": [
+          {
+            "name": "Basic",
+            "active": false,
+            "collapsed": true,
+            "route": "/profile/basic",
+            "icon": "plus",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          }, {
+            "name": "Change Password",
+            "active": false,
+            "collapsed": true,
+            "route": "/profile/password",
+            "icon": "plus",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          },
+          {
+            "name": "Advanced",
+            "active": false,
+            "collapsed": true,
+            "route": "/profile/advance",
+            "icon": "plus",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          },
+        ]
+      } 
       ]
     }];
 
