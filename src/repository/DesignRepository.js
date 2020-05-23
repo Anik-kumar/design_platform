@@ -68,7 +68,7 @@ module.exports = class UserRepository {
       result = await Designs.find({
         "user_unique_id": filter
       }).exec();
-      console.log("From DesignRepository result => ", result);
+      // console.log("From DesignRepository result => ", result);
       if(!result) {
         success = false;
       }
@@ -123,7 +123,7 @@ module.exports = class UserRepository {
 
     try{
       result = await Designs.find(filter).exec();
-      console.log("From DesignRepository result => ", result);
+      // console.log("From DesignRepository result => ", result);
       if(!result) {
         success = false;
       }

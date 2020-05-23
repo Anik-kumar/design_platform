@@ -443,4 +443,36 @@ module.exports = class UserService {
 
 	}
 
+
+	static async getProfileDetails(userId) {
+		let result;
+    let found = true;
+		let err = '';
+		console.log("User serivce ", userId);
+
+    try{
+      result = await userRepository.findOne({ 'unique_id': userId });
+
+      if(result.success) {
+				found = result.success;
+				console.log("UserService>> Profile: ", result.result);
+				console.log("UserService>> Profile retirved ");
+      }else {
+				found = result.success;
+				console.log('UserService>>  User not found');
+      }
+    } catch (e) {
+      console.log("Exception error in getProfileDetails() in UserService. " + e);
+      found = false;
+			err = e;
+    }
+
+    return {
+      error: err,
+			success: found,
+			data: result.result
+		}
+
+	}
+
 };

@@ -209,18 +209,19 @@ var testNav = [
         "name": "Profile",
         "active": false,
         "collapsed": true,
-        "icon": "image",
+        "route": "/profile",
+        "icon": "user",
         "style": {
           "height": "0px",
           "padding-top": "0px"
         },
         "subMenu": [
           {
-            "name": "Basic",
+            "name": "General",
             "active": false,
             "collapsed": true,
             "route": "/profile/basic",
-            "icon": "plus",
+            "icon": "settings",
             "badge": "",
             "style": {
               "height": "0px",
@@ -231,7 +232,7 @@ var testNav = [
             "active": false,
             "collapsed": true,
             "route": "/profile/password",
-            "icon": "plus",
+            "icon": "key",
             "badge": "",
             "style": {
               "height": "0px",
@@ -243,7 +244,7 @@ var testNav = [
             "active": false,
             "collapsed": true,
             "route": "/profile/advance",
-            "icon": "plus",
+            "icon": "tool",
             "badge": "",
             "style": {
               "height": "0px",
