@@ -18,7 +18,19 @@ const schema = new mongoose.Schema({
 		likes: Number,
 		tag: [],
 		key: String,
-		aws_name: String
+		aws_name: String,
+		reviewed_by: {
+			user: String,
+			date: Date
+		},
+		approved_by: {
+			user: String,
+			date: Date
+		},
+		rejected_by: {
+			user: String,
+			date: Date
+		}
 	},
 	photos: [{
 		title: String,
@@ -46,6 +58,10 @@ const schema = new mongoose.Schema({
 		type: Date,
 		// `Date.now()` returns the current unix timestamp as a number
 		default: Date.now
+	},
+	whereami: {
+		current_state: String,
+		previous_state: String
 	}
 });
 

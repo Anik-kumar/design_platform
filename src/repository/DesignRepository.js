@@ -25,7 +25,19 @@ module.exports = class UserRepository {
           likes: 0,
           tag: tags,
           key: key,
-          aws_name: awsName
+          aws_name: awsName,
+          reviewed_by: {
+            user: String,
+            date: Date
+          },
+          approved_by: {
+            user: String,
+            date: Date
+          },
+          rejected_by: {
+            user: String,
+            date: Date
+          }
         },
         photos: [{
           title: "",
@@ -40,7 +52,11 @@ module.exports = class UserRepository {
         likes: 0,
         comment: [],
         votes: 0,
-        tags: tags
+        tags: tags,
+        whereami: {
+          current_state: "submitted",
+          previous_state: ""
+        }
       };
       result = await Designs.create(udesignObj);
       success = true;
