@@ -7,11 +7,15 @@ module.exports = class DesignService {
 
   }
 
+  sanitaizeTitle(title) {
+    let newTitle = title.replace(/[^a-zA-Z0-9]/g, '-');
+    return newTitle;
+  }
 
   static async create(designObj) {
     let result = {}, success = false, error = null;
     try {
-      let titlePath = sanitaizeTitle(title);
+      let titlePath = sanitaizeTitle(designObj.title);
       result = await designRepository.createDesign(designObj.userId, designObj.designId, designObj.title, titlePath, designObj.type, designObj.fileSize, designObj.tags, designObj.url ,designObj.des, designObj.key, designObj.awsName);
       if (result.success && !_.isNil(result.data)) {
         console.log('Design creation Successful');
@@ -134,11 +138,29 @@ module.exports = class DesignService {
     }
   }
 
+  static async updateOne(filterObj, designObj) {
+    let result = {}, success = false, error = null;
+    try {
+      result = await designRepository.updateDesignState(filterObj, designObj);
+      if (result.success && !_.isNil(result.data)) {
+        console.log('Design update Successful');
+        success = true;
+      } else {
+        console.log('Design is not updated');
+        success = false;
+        error = "DesignNotUpdated";
+      }
+    }catch (ex) {
+      loggerService.error({message: '[DesignService]-ERROR: Exception at update(): ', error: ex});
+      success = false;
+      error = ex;
+    }
 
-
-  sanitaizeTitle(title) {
-    let newTitle = title.replace(/[^a-zA-Z0-9]/g, '-');
-    return newTitle;
+    return {
+      data: result.data,
+      error: error,
+      success: success
+    }
   }
 
 }
