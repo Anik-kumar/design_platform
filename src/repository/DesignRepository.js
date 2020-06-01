@@ -175,17 +175,47 @@ module.exports = class UserRepository {
         "raw_design.public_url": link,
         "raw_design.file_size": size
       };
-      result = await Designs.findOneAndUpdate(
+      result = await Designs.update(
         {
           'user_unique_id': user_id,
           'design_id': design_id
         },
-        { $set: udesignObj },
-        { useFindAndModify: false }
+        { $set: udesignObj }
       );
-      success = true;
+      
+      if(result.ok == 1) {
+        success = true;
+      }else {
+        success = false;
+      }
     } catch (ex) {
       loggerService.error({message: '[UserRepository]-ERROR: Exception at updateDesign(): ', error: ex});
+      success = false;
+    }
+
+    return {
+      data: result,
+      success: success
+    }
+  }
+
+  static async updateDesignState(filterObj, udesignObj) {
+    let result = {}, success = false;
+    console.log('userRepo -> ', filterObj);
+    console.log('userRepo -> ', udesignObj);
+    try {
+      
+      result = await Designs.update(
+        filterObj,
+        { $set: udesignObj }
+      );
+      if(result.ok == 1) {
+        success = true;
+      }else {
+        success = false;
+      }
+    } catch (ex) {
+      loggerService.error({message: '[UserRepository]-ERROR: Exception at updateDesignState(): ', error: ex});
       success = false;
     }
 

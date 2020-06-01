@@ -149,17 +149,18 @@ router.post('/update', async (req, res, next) => {
 
 router.get('/details/:title', async (req, res, next) => {
   const title = req.params.title;
+  const userId = req.user_id | req.headers.user_id;
   let response = {};
-  console.log("/details/:title => ", req.user_id);
+  console.log("/details/:title => ", userId);
   console.log("/details/:title ", title);
-  if(_.isNil(req.user_id)) {
+  if(_.isNil(userId)) {
     return res.status(401).send({
       message: "Unauthorized Access"
     });
   }
 
   try {
-    const result = await designService.findOne({"user_unique_id": req.user_id, "title_path": title});
+    const result = await designService.findOne({"user_unique_id": userId, "title_path": title});
     console.log('Get Design Result', result);
     if(result.success && _.isNil(result.error)) {
       response.data = result.data;
@@ -187,16 +188,17 @@ router.get('/details/:title', async (req, res, next) => {
 router.get('/edit/:title', async (req, res, next) => {
   const title = req.params.title;
   let response = {};
-  console.log("/edit/:title => ", req.headers.user_id);
+  const userId = req.user_id | req.headers.user_id;
+  console.log("/edit/:title => ", userId);
   console.log("/edit/:title ", title);
-  // if(_.isNil(req.user_id)) {
-  //   return res.status(401).send({
-  //     message: "Unauthorized Access"
-  //   });
-  // }
+  if(_.isNil(userId)) {
+    return res.status(401).send({
+      message: "Unauthorized Access"
+    });
+  }
 
   try {
-    const result = await designService.findOne({"user_unique_id": req.headers.user_id, "title_path": title});
+    const result = await designService.findOne({"user_unique_id": userId, "title_path": title});
     console.log('Get Design Result', result);
     if(result.success && _.isNil(result.error)) {
       response.data = result.data;
@@ -220,6 +222,186 @@ router.get('/edit/:title', async (req, res, next) => {
   return res.send(response);
 });
 
+
+router.get('/state/review/:designid', async (req, res, next) => {
+  const designId = req.params.designid;
+  const userId = req.user_id || req.headers.user_id;
+  let response = {};
+  console.log("/review/:designId => ", userId);
+  console.log("/review/:designId ", designId);
+  if(_.isNil(userId)) {
+    return res.status(401).send({
+      message: "Unauthorized Access"
+    });
+  }
+
+  try {
+    let filterObj = {
+      "design_id": designId, 
+      "user_unique_id": userId
+    };
+    let updateObj = {
+      'whereami.current_state': 'reviewing', 
+      'whereami.previous_state': 'submitted'
+    };
+    const result = await designService.updateOne(filterObj, updateObj);
+    console.log('Get Design Result', result);
+    if(result.success && _.isNil(result.error)) {
+      response.data = result.data;
+      response.message = "User design state is changed to 'reviewing'";
+      response.error = null;
+      response.success = true;
+    }else {
+      response.data = result.data;
+      response.message = "User design state is failed to change";
+      response.error = "Error in designReviewState";
+      response.success = false;
+    }
+    res.status(200);
+  } catch(error) {
+    console.log("Exception error in UserRouter /review/:designId. ", error);
+    response.message = "Exception error in /review/:designId ";
+    response.error = error;
+    response.success = false;
+  }
+
+  return res.send(response);
+});
+
+router.get('/state/submit/:designid', async (req, res, next) => {
+  const designId = req.params.designid;
+  const userId = req.user_id || req.headers.user_id;
+  let response = {};
+  console.log("/state/submit/:title => ", userId);
+  console.log("/state/submit/:title ", designId);
+  // if(_.isNil(userId)) {
+  //   return res.status(401).send({
+  //     message: "Unauthorized Access"
+  //   });
+  // }
+
+  try {
+    let filterObj = {
+      "design_id": designId, 
+      "user_unique_id": userId
+    };
+    let updateObj = {
+      'whereami.current_state': 'submitted', 
+      'whereami.previous_state': ''
+    };
+    const result = await designService.updateOne(filterObj, updateObj);
+    console.log('Get Design Result', result);
+    if(result.success && _.isNil(result.error)) {
+      response.data = result.data;
+      response.message = "User design state is changed to 'submitted'";
+      response.error = null;
+      response.success = true;
+    }else {
+      response.data = result.data;
+      response.message = "User design state is failed to change";
+      response.error = "Error in designReviewState";
+      response.success = false;
+    }
+    res.status(200);
+  } catch(error) {
+    console.log("Exception error in UserRouter /state/submit/:title. ", error);
+    response.message = "Exception error in /state/submit/:title ";
+    response.error = error;
+    response.success = false;
+  }
+
+  return res.send(response);
+});
+
+router.get('/state/approve/:designid', async (req, res, next) => {
+  const designId = req.params.designid;
+  const userId = req.user_id || req.headers.user_id;
+  let response = {};
+  console.log("/state/submit/:designid => ", userId);
+  console.log("/state/submit/:designid => ", designId);
+  // if(_.isNil(userId)) {
+  //   return res.status(401).send({
+  //     message: "Unauthorized Access"
+  //   });
+  // }
+
+  try {
+    let filterObj = {
+      "design_id": designId, 
+      "user_unique_id": userId
+    };
+    let updateObj = {
+      'whereami.current_state': 'submitted', 
+      'whereami.previous_state': ''
+    };
+    const result = await designService.updateOne(filterObj, updateObj);
+    console.log('Get Design Result', result);
+    if(result.success && _.isNil(result.error)) {
+      response.data = result.data;
+      response.message = "User design state is changed to 'submitted'";
+      response.error = null;
+      response.success = true;
+    }else {
+      response.data = result.data;
+      response.message = "User design state is failed to change";
+      response.error = "Error in designReviewState";
+      response.success = false;
+    }
+    res.status(200);
+  } catch(error) {
+    console.log("Exception error in UserRouter /state/submit/:designid. ", error);
+    response.message = "Exception error in /state/submit/:designid ";
+    response.error = error;
+    response.success = false;
+  }
+
+  return res.send(response);
+});
+
+router.get('/state/reject/:designid', async (req, res, next) => {
+  const designId = req.params.designid;
+  const userId = req.user_id || req.headers.user_id;
+  let response = {};
+  console.log("/state/reject/:designid => ", userId);
+  console.log("/state/reject/:designid => ", designId);
+  // if(_.isNil(userId)) {
+  //   return res.status(401).send({
+  //     message: "Unauthorized Access"
+  //   });
+  // }
+
+  try {
+    let filterObj = {
+      "design_id": designId, 
+      "user_unique_id": userId
+    };
+    let updateObj = {
+      'whereami.current_state': 'submitted', 
+      'whereami.previous_state': ''
+    };
+    const result = await designService.updateOne(filterObj, updateObj);
+    console.log('Get Design Result', result);
+    if(result.success && _.isNil(result.error)) {
+      response.data = result.data;
+      response.message = "User design state is changed to 'submitted'";
+      response.error = null;
+      response.success = true;
+    }else {
+      response.data = result.data;
+      response.message = "User design state is failed to change";
+      response.error = "Error in designReviewState";
+      response.success = false;
+    }
+    res.status(200);
+  } catch(error) {
+    console.log("Exception error in UserRouter /state/submit/:designid. ", error);
+    response.message = "Exception error in /state/submit/:designid ";
+    response.error = error;
+    response.success = false;
+  }
+
+  return res.send(response);
+});
 
 
 module.exports = router;
