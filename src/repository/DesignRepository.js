@@ -26,17 +26,18 @@ module.exports = class UserRepository {
           tag: tags,
           key: key,
           aws_name: awsName,
+          reviewer: "",
           reviewed_by: {
-            user: String,
-            date: Date
+            user: "",
+            date: null
           },
           approved_by: {
-            user: String,
-            date: Date
+            user: "",
+            date: null
           },
           rejected_by: {
-            user: String,
-            date: Date
+            user: "",
+            date: null
           }
         },
         photos: [{
@@ -56,7 +57,8 @@ module.exports = class UserRepository {
         whereami: {
           current_state: "submitted",
           previous_state: ""
-        }
+        },
+        year_month_index:
       };
       result = await Designs.create(udesignObj);
       success = true;
@@ -71,93 +73,7 @@ module.exports = class UserRepository {
     }
   }
 
-  /**
-   * returns all designs of user
-   * @param {string} filter user id to search design
-   */
-  static async findDesgins(filter) {
-    let success = true;
-    let result;
-    console.log("From DesignRepository => ", filter);
-
-    try{
-      result = await Designs.find({
-        "user_unique_id": filter
-      }).exec();
-      // console.log("From DesignRepository result => ", result);
-      if(!result) {
-        success = false;
-      }
-      
-    } catch(ex) {
-      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findDesigns(): ', error: ex});
-      success = false;
-    }
-
-
-    return {
-      success: success,
-      result: result
-    }
-  }
-
-  /**
-   * returns one design of user
-   * @param {object} filter obj to search
-   */
-  static async findOne(filter) {
-    let success = true;
-    let result = {};
-    console.log("From DesignRepository => ", filter);
-
-    try{
-      result = await Designs.findOne(filter).exec();
-      console.log("From DesignRepository result => ", result);
-      if(!result) {
-        success = false;
-      }
-    } catch(ex) {
-      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findOne(): ', error: ex});
-      success = false;
-    }
-
-
-    return {
-      success: success,
-      data: result
-    }
-  }
-
-  /**
-   * returns all designs of user
-   * @param {object} filter oject to search
-   */
-  static async findAll(filter) {
-    let success = true;
-    let result;
-    console.log("From DesignRepository => ", filter);
-
-    try{
-      result = await Designs.find(filter).exec();
-      // console.log("From DesignRepository result => ", result);
-      if(!result) {
-        success = false;
-      }
-      
-    } catch(ex) {
-      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findAll(): ', error: ex});
-      success = false;
-    }
-
-
-    return {
-      success: success,
-      result: result
-    }
-  }
-
-
-
+  
   static async updateDesign(user_id, design_id, title, type,size, tags,link,description, key, awsName) {
     let result = {}, success = false;
     console.log('userRepo -> ', user_id,design_id,title,type,size,tags,link,description,key,awsName);
@@ -199,10 +115,121 @@ module.exports = class UserRepository {
     }
   }
 
+  /**
+   * returns all designs of user
+   * @param {string} filter user id to search design
+   */
+  static async findDesgins(filter) {
+    let success = true;
+    let result;
+    // console.log("From DesignRepository => ", filter);
+
+    try{
+      result = await Designs.find({
+        "user_unique_id": filter
+      }).exec();
+      // console.log("From DesignRepository result => ", result);
+      if(!result) {
+        success = false;
+      }
+      
+    } catch(ex) {
+      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findDesigns(): ', error: ex});
+      success = false;
+    }
+
+
+    return {
+      success: success,
+      result: result
+    }
+  }
+
+  /**
+   * returns one design of user
+   * @param {object} filter obj to search
+   */
+  static async findOne(filter) {
+    let success = true;
+    let result = {};
+    // console.log("From DesignRepository => ", filter);
+
+    try{
+      result = await Designs.findOne(filter).exec();
+      // console.log("From DesignRepository result => ", result);
+      if(!result) {
+        success = false;
+      }
+    } catch(ex) {
+      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findOne(): ', error: ex});
+      success = false;
+    }
+
+
+    return {
+      success: success,
+      data: result
+    }
+  }
+
+  /**
+   * returns all designs of user
+   * @param {object} filter oject to search
+   */
+  static async findAll(filter) {
+    let success = true;
+    let result;
+    // console.log("From DesignRepository => ", filter);
+
+    try{
+      result = await Designs.find(filter).exec();
+      // console.log("From DesignRepository result => ", result);
+      if(!result) {
+        success = false;
+      }
+      
+    } catch(ex) {
+      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findAll(): ', error: ex});
+      success = false;
+    }
+
+
+    return {
+      success: success,
+      result: result
+    }
+  }
+
+  /**
+   * returns all designs in db
+   * 
+   */
+  static async findAllInDb() {
+    let success = true;
+    let result;
+
+    try{
+      result = await Designs.find({}).exec();
+      // console.log("From DesignRepository result => ", result);
+      if(!result) {
+        success = false;
+      }
+    } catch(ex) {
+      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findAllInDb(): ', error: ex});
+      success = false;
+    }
+
+    return {
+      success: success,
+      data: result
+    }
+  }
+
+
   static async updateDesignState(filterObj, udesignObj) {
     let result = {}, success = false;
-    console.log('userRepo -> ', filterObj);
-    console.log('userRepo -> ', udesignObj);
+    // console.log('userRepo -> ', filterObj);
+    // console.log('userRepo -> ', udesignObj);
     try {
       
       result = await Designs.update(

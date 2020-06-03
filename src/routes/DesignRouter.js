@@ -83,6 +83,45 @@ router.get('/get-all', async (req, res, next) => {
 
 });
 
+router.get('/get-all-unrestrict', async (req, res, next) => {
+  let response = {};
+  const userId = req.user_id || req.headers.user_id;
+  console.log("getdesigns => ", userId);
+  console.log("getdesigns => ", req.user_id);
+  if(_.isNil(userId)) {
+    return res.status(401).send({
+      message: "Unauthorized Access"
+    });
+  }
+  try{
+    const userObj = await userService.findUserById(userId);
+    if(userObj.result.user_type.toLowerCase() === "admin" || userObj.result.user_type.toLowerCase() === "reviewer") {
+      const result = await designService.findAllInDB();
+      console.log('Get Design Result', result);
+      if(result.success && _.isNil(result.error)) {
+        response.data = result.data;
+        response.message = "User designs is retrived";
+        response.error = null;
+        response.success = true;
+      }else {
+        response.data = result.data;
+        response.message = "User designs is NOT retrived";
+        response.error = "Error in getDesignsRouter";
+        response.success = false;
+      }
+    }
+    res.status(200);
+  } catch(error) {
+    console.log("Exception error in UserRouter /get-all-unrestrict. ", error);
+    response.message = "Exception error in /get-all-unrestrict";
+    response.error = error;
+    response.success = false;
+  }
+
+  return res.send(response);
+
+});
+
 
 router.post('/find-one', async (req, res, next) => {
   let response = {};
