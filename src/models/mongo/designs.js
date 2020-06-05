@@ -19,6 +19,10 @@ const schema = new mongoose.Schema({
 		tag: [],
 		key: String,
 		aws_name: String,
+		reviewer: {
+			type: String,
+			index: true
+		},
 		reviewed_by: {
 			user: String,
 			date: Date
@@ -59,6 +63,7 @@ const schema = new mongoose.Schema({
 		// `Date.now()` returns the current unix timestamp as a number
 		default: Date.now
 	},
+	year_month_index: { type: String, index: true}, //2020-01
 	whereami: {
 		current_state: String,
 		previous_state: String

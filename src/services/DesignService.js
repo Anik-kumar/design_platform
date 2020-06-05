@@ -15,7 +15,7 @@ module.exports = class DesignService {
   static async create(designObj) {
     let result = {}, success = false, error = null;
     try {
-      let titlePath = sanitaizeTitle(designObj.title);
+      let titlePath = this.sanitaizeTitle(designObj.title);
       result = await designRepository.createDesign(designObj.userId, designObj.designId, designObj.title, titlePath, designObj.type, designObj.fileSize, designObj.tags, designObj.url ,designObj.des, designObj.key, designObj.awsName);
       if (result.success && !_.isNil(result.data)) {
         console.log('Design creation Successful');
@@ -152,6 +152,31 @@ module.exports = class DesignService {
       }
     }catch (ex) {
       loggerService.error({message: '[DesignService]-ERROR: Exception at update(): ', error: ex});
+      success = false;
+      error = ex;
+    }
+
+    return {
+      data: result.data,
+      error: error,
+      success: success
+    }
+  }
+
+  static async findAllInDB() {
+    let result = {}, success = false, error = null;
+    try {
+      result = await designRepository.findAllInDb();
+      if (result.success && !_.isNil(result.data)) {
+        console.log('Designs retrived successful');
+        success = true;
+      } else {
+        console.log('Design is not retrived', result);
+        success = false;
+        error = "DesignNotRetrived";
+      }
+    }catch (ex) {
+      loggerService.error({message: '[DesignService]-ERROR: Exception at findAllInDB(): ', error: ex});
       success = false;
       error = ex;
     }

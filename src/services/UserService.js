@@ -84,6 +84,33 @@ module.exports = class UserService {
 
 	}
 
+	/**
+	 *  @param userId unique_id of the user
+	 *  @returns { Promise<{result: *, success: *}>}
+	 */
+	static async findUserById(userId) {
+		let result, success = true, data;
+
+		try {
+			result = await userRepository.findOne({'unique_id': userId});
+			if (result.success) {
+				data = result.result;
+			} else {
+				success = false;
+				data = "UserNotFound";
+			}
+		} catch (e) {
+			console.log("Exception error in findUserById() in UserService. " + e);
+			next(e);
+		}
+
+		return {
+			success: success,
+			result: data
+		}
+
+	}
+
 	/** 
 	 * user registration
 	 * @param {string} userEmail 
