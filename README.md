@@ -76,6 +76,3 @@ $ yarn install
 https://buddy.works/guides/how-automate-nodejs-unit-tests-with-mocha-chai
 https://istanbul.js.org/docs/tutorials/mocha/
 https://github.com/Danver97/user-service/blob/master/test/integration.test.js#L4
-
-
-https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/s3-example-creating-buckets.html

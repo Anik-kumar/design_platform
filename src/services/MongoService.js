@@ -26,8 +26,11 @@ class MongoService {
 		try {
 			console.log('Mongo Initialize');
 			let mongodbURI = config.get('database.mongo.uri');
-			if (!_.isNil(process.env.MONGO_DB_HOST) && !_.isNil(process.env.MONGO_DB_PORT) && !_.isNil(process.env.MONGO_DB_NAME)) {
-				mongodbURI = 'mongodb://' + process.env.MONGO_DB_HOST + ':' + process.env.MONGO_DB_PORT + '/' + process.env.MONGO_DB_NAME;
+			// if (!_.isNil(process.env.MONGO_DB_HOST) && !_.isNil(process.env.MONGO_DB_PORT) && !_.isNil(process.env.MONGO_DB_NAME)) {
+			// 	mongodbURI = 'mongodb://' + process.env.MONGO_DB_HOST + ':' + process.env.MONGO_DB_PORT + '/' + process.env.MONGO_DB_NAME;
+			// }
+			if (!_.isNil(process.env.MONGO_DB_HOST) && !_.isNil(process.env.MONGO_DB_PORT) && !_.isNil(process.env.MONGO_DB_NAME) && !_.isNil(process.env.MONGO_USERNAME) && !_.isNil(process.env.MONGO_PASSWORD)) {
+				mongodbURI = 'mongodb://'+ process.env.MONGO_USERNAME + ":" + process.env.MONGO_PASSWORD + "@" + process.env.MONGO_DB_HOST + ':' + process.env.MONGO_DB_PORT + '/' + process.env.MONGO_DB_NAME + "?authSource=admin";
 			}
 			if(process.env.NODE_ENV === 'production') {
 				let auth = process.env.MONGO_USERNAME + ':' + process.env.MONGO_PASSWORD;
@@ -38,8 +41,9 @@ class MongoService {
 			// Set up default mongoose connection
 			let options = {
 				useNewUrlParser: true,
+				useUnifiedTopology: true,
 				autoReconnect: true,
-				connectTimeout: 10000,
+				serverSelectionTimeoutMS: 10000,
 				poolSize: 10,
 				reconnectTries: Number.MAX_VALUE,
 				reconnectInterval: 500,

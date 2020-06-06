@@ -159,39 +159,188 @@ var testNav = [
   var baseNav = [{
       "name": "CORE",
       "menu": [{
-          "name": "Dashboard",
-          "active": false,
-          "collapsed": true,
-          "route": "/dashboard",
-          "icon": "monitor",
-          "style": {
-            "height": "0px",
-            "padding-top": "0px"
-          },
-          "subMenu": []
-        }, {
-            "name": "New design",
-            "active": false,
-            "collapsed": true,
-            "route": "/design",
-            "icon": "plus",
-            "style": {
-              "height": "0px",
-              "padding-top": "0px"
-            },
-            "subMenu": []
-        }, {
-        "name": "Show design",
+        "name": "Dashboard",
         "active": false,
         "collapsed": true,
-        "route": "/design/list",
-        "icon": "image",
+        "route": "/dashboard",
+        "icon": "monitor",
+        "matIcon": "",
+        "faIcon": "",
         "style": {
           "height": "0px",
           "padding-top": "0px"
         },
         "subMenu": []
-      }]
+      }, 
+      {
+        "name": "Design",
+        "active": false,
+        "collapsed": true,
+        "route": "/design",
+        "icon": "image",
+        "matIcon": "",
+        "faIcon": "",
+        "style": {
+          "height": "0px",
+          "padding-top": "0px"
+        },
+        "subMenu": [
+          {
+            "name": "Create",
+            "active": false,
+            "collapsed": true,
+            "route": "/design/new",
+            "icon": "plus",
+            "matIcon": "",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          },
+          {
+            "name": "My Designs",
+            "active": false,
+            "collapsed": true,
+            "route": "/design/list",
+            "icon": "",
+            "matIcon": "photo_library",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          }
+        ]
+      }, 
+      {
+        "name": "Profile",
+        "active": false,
+        "collapsed": true,
+        "route": "/profile",
+        "icon": "user",
+        "matIcon": "",
+        "faIcon": "",
+        "style": {
+          "height": "0px",
+          "padding-top": "0px"
+        },
+        "subMenu": [
+          {
+            "name": "General",
+            "active": false,
+            "collapsed": true,
+            "route": "/profile/basic",
+            "icon": "settings",
+            "matIcon": "",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          }, {
+            "name": "Change Password",
+            "active": false,
+            "collapsed": true,
+            "route": "/profile/password",
+            "icon": "key",
+            "matIcon": "",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          },
+          {
+            "name": "Advanced",
+            "active": false,
+            "collapsed": true,
+            "route": "/profile/advance",
+            "icon": "tool",
+            "matIcon": "",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          },
+        ]
+      },
+      {
+        "name": "Admin",
+        "active": false,
+        "collapsed": true,
+        "route": "/admin",
+        "icon": "",
+        "matIcon": "security",
+        "faIcon": "",
+        "style": {
+          "height": "0px",
+          "padding-top": "0px"
+        },
+        "subMenu": [
+          {
+            "name": "Dashboard",
+            "active": false,
+            "collapsed": true,
+            "route": "/admin",
+            "icon": "",
+            "matIcon": "dashboard",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          }, {
+            "name": "Add Admin",
+            "active": false,
+            "collapsed": true,
+            "route": "/admin/new/admin",
+            "icon": "user-plus",
+            "matIcon": "",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          }, {
+            "name": "Verify Designs",
+            "active": false,
+            "collapsed": true,
+            "route": "/admin/review",
+            "icon": "key",
+            "matIcon": "",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          },
+          {
+            "name": "Create Poll",
+            "active": false,
+            "collapsed": true,
+            "route": "/admin/new/poll",
+            "icon": "tool",
+            "matIcon": "",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          },
+        ]
+      }
+      ]
     }];
 
 

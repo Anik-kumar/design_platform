@@ -10,7 +10,6 @@ var publicKEY  = fs.readFileSync('./cert/public.key', 'utf8');
 
 module.exports =  class JwtService {
 	constructor(){
-
 	}
 
 	static async sign(data, options) {
@@ -78,6 +77,36 @@ module.exports =  class JwtService {
 				reject(ex);
 			}
 		});
+	}
+
+	static verifySync(token) {
+		
+			try {
+				var verifyOptions = {
+					issuer: "pijus.me",
+					subject: "admin@pijus.me",
+					audience:  'Client_Identity',
+					algorithms:  ["RS256"]
+				};
+
+				try{
+
+					var decoded = jwt.verify(token, privateKEY, verifyOptions);
+					return {
+						data: decoded,
+						token: token,
+						success: true
+					};
+				} catch(error) {
+					loggingService.error({message: '[JwtService]-ERROR: Error at verifySync(): ', error: error});
+					throw error;
+				}
+
+			} catch (ex) {
+				loggingService.error({message: '[JwtService]-ERROR: Error at verifySync(): ', error: ex});
+				throw ex;
+			}
+		
 	}
 
 

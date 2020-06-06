@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 
 const Users = require('../models/mongo/users');
 const userRepository = require('../repository/UserRepository');
+const designRepository = require('../repository/DesignRepository');
 
 const jwtService = require('../services/JwtService');
 const loggerService = require('../services/LoggingService');
@@ -73,6 +74,33 @@ module.exports = class UserService {
 			}
 		} catch (e) {
 			console.log("Exception error in findUserByEmailAndPassword() in UserService. " + e);
+			next(e);
+		}
+
+		return {
+			success: success,
+			result: data
+		}
+
+	}
+
+	/**
+	 *  @param userId unique_id of the user
+	 *  @returns { Promise<{result: *, success: *}>}
+	 */
+	static async findUserById(userId) {
+		let result, success = true, data;
+
+		try {
+			result = await userRepository.findOne({'unique_id': userId});
+			if (result.success) {
+				data = result.result;
+			} else {
+				success = false;
+				data = "UserNotFound";
+			}
+		} catch (e) {
+			console.log("Exception error in findUserById() in UserService. " + e);
 			next(e);
 		}
 
@@ -352,6 +380,124 @@ module.exports = class UserService {
     return {
       error: err,
       success: found
+		}
+
+	}
+
+	/**
+	 * Updates user password
+	 * @param {string} userEmail 
+	 * @param {string} userPass 
+	 * @return { Promise<{error: string, success: boolean}>}
+	 */
+	static async uploadDesign(postTitle, title, type, tags, description) {
+		let result;
+    let found = true;
+		let err = '';
+		let updateUser;
+
+    try{
+      result = await userRepository.findOne({'email': userEmail, 'verification.is_reset_pass_active': true});
+
+      if(result.success) {
+
+				updateUser = await userRepository.updateOne({
+					'email': userEmail,
+					'verification.is_reset_pass_active': true
+				}, {
+					'pass': userPass,
+					'verification.is_reset_pass_active': false
+				});
+
+				if(updateUser.success) {
+					found = true;
+					console.log('UserService>>  User verify status updated');
+				}else {
+					found = false;
+					console.log('UserService>>  User verify status update failed');
+				}
+      }else {
+				found = false;
+				console.log('UserService>>  User not found');
+      }
+    } catch (e) {
+      console.log("Exception error in verifyUserEmail() in UserService. " + e);
+      found = false;
+			err = e;
+    }
+
+    return {
+      error: err,
+      success: found
+		}
+
+	}
+
+
+	/**
+	 * Updates user password
+	 * @param {string} userEmail 
+	 * @param {string} userPass 
+	 * @return { Promise<{error: string, success: boolean}>}
+	 */
+	static async getDesigns(userId) {
+		let result;
+    let found = true;
+		let err = '';
+
+    try{
+      result = await designRepository.findAll({ 'user_unique_id': userId });
+
+      if(result.success) {
+				found = true;
+				// console.log("UserService>> Designs: ", result.result);
+				console.log("UserService>> Designs retirved ");
+      }else {
+				found = false;
+				console.log('UserService>>  User not found');
+      }
+    } catch (e) {
+      console.log("Exception error in verifyUserEmail() in UserService. " + e);
+      found = false;
+			err = e;
+    }
+
+    return {
+      error: err,
+			success: found,
+			data: result
+		}
+
+	}
+
+
+	static async getProfileDetails(userId) {
+		let result;
+    let found = true;
+		let err = '';
+		console.log("User serivce ", userId);
+
+    try{
+      result = await userRepository.findOne({ 'unique_id': userId });
+
+      if(result.success) {
+				found = result.success;
+				console.log("UserService>> Profile: ", result.result);
+				console.log("UserService>> Profile retirved ");
+      }else {
+				found = result.success;
+				console.log('UserService>>  User not found');
+      }
+    } catch (e) {
+      console.log("Exception error in getProfileDetails() in UserService. " + e);
+      found = false;
+			err = e;
+    }
+
+    return {
+      error: err,
+			success: found,
+			data: result.result
 		}
 
 	}

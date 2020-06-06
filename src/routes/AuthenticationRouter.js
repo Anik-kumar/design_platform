@@ -62,6 +62,7 @@ router.post('/login', async function(req, res, next) {
 					role: user.role,
 					_id: user._id,
 					email: user.email,
+					type: user.user_type,
 					lastLogin: user.lastLogin,
 					token: token.token
 				};
@@ -81,7 +82,7 @@ router.post('/login', async function(req, res, next) {
 		console.log(ex);
 		loggerService.getDefaultLogger().error('[ROUTE]-[INDEX]-ERROR: Exception get request at /auth/login route: ' + JSON.stringify(ex));
 	}
-
+	console.log(" User signin property ->", response);
 	res.send(response);
 });
 

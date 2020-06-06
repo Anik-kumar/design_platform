@@ -7,6 +7,7 @@ const _ = require('lodash');
 
 const loggerService = require('../services/LoggingService');
 const userService = require('../services/UserService');
+const designService = require('../services/DesignService');
 let {ResUserModel} = require('../models/response/response.models');
 
 
@@ -93,6 +94,41 @@ router.post('/send-reset-pass', async function(req, res, next) {
   res.send(response);
 });
 
+
+router.get('/profile', async function(req, res, next) {
+	let response = {};
+  // console.log(req.body.email);
+  // console.log(req.headers.user_id);
+  console.log(req.user_id);
+  
+  if(_.isNil(req.user_id)) {
+    return res.status(401).send({
+      message: "Unauthorized Access"
+    });
+  }
+
+	try{
+    const result = await userService.getProfileDetails(req.user_id);
+    
+    if((result.success && _.isEmpty(result.error)) || _.isNil(result.error)) {
+      response.message = "User profile is details retrived";
+      response.success = true;
+      response.error = null;
+      response.data = result.data;
+    } else {
+      response.message = "User profile is not found";
+      response.success = false;
+      response.error = result.error;
+      response.data = result.data;
+    }
+    // response = result;
+    res.status(200);
+	} catch (err) {
+		console.log(err);
+  }
+  
+  res.send(response);
+});
 
 
 
