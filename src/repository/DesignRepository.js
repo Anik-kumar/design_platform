@@ -8,6 +8,8 @@ module.exports = class UserRepository {
 
   static async createDesign(user_id, design_id, title, titlePath, type, file_size, tags, public_url, description, key, awsName) {
     let result = {}, success = false;
+    let year = new Date().getUTCFullYear();
+    let month = new Date().getUTCMonth();
     console.log('userRepo -> ', user_id,design_id,title,titlePath,type,file_size,tags,public_url,description,key,awsName);
     try {
       let udesignObj = {
@@ -58,7 +60,7 @@ module.exports = class UserRepository {
           current_state: "submitted",
           previous_state: ""
         },
-        year_month_index:
+        year_month_index: year + "-" + month
       };
       result = await Designs.create(udesignObj);
       success = true;
@@ -216,6 +218,56 @@ module.exports = class UserRepository {
       }
     } catch(ex) {
       loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findAllInDb(): ', error: ex});
+      success = false;
+    }
+
+    return {
+      success: success,
+      data: result
+    }
+  }
+
+  /**
+   * returns all designs in db
+   * 
+   */
+  static async findOnlyForAdminUser(filter) {
+    let success = true;
+    let result;
+
+    try{
+      result = await Designs.find(filter).exec();
+      // console.log("From DesignRepository result => ", result);
+      if(!result) {
+        success = false;
+      }
+    } catch(ex) {
+      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findAllForAdminUser(): ', error: ex});
+      success = false;
+    }
+
+    return {
+      success: success,
+      data: result
+    }
+  }
+
+  /**
+   * returns all designs in db
+   * 
+   */
+  static async findAdminApproved(userId) {
+    let success = true;
+    let result;
+
+    try{
+      result = await Designs.find({"user_unique_id": userId, "whereami.current_state": "approved"}).exec();
+      // console.log("From DesignRepository result => ", result);
+      if(!result) {
+        success = false;
+      }
+    } catch(ex) {
+      loggerService.error({message: '[DesignRepository]-ERROR:  Exception at findAllApproved(): ', error: ex});
       success = false;
     }
 
