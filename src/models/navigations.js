@@ -339,6 +339,48 @@ var testNav = [
             },
           },
         ]
+      },
+      {
+        "name": "Activity",
+        "active": false,
+        "collapsed": true,
+        "route": "/activity",
+        "icon": "",
+        "matIcon": "security",
+        "faIcon": "",
+        "style": {
+          "height": "0px",
+          "padding-top": "0px"
+        },
+        "subMenu": [
+          {
+            "name": "Mine",
+            "active": false,
+            "collapsed": true,
+            "route": "/activity/mine",
+            "icon": "",
+            "matIcon": "person",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          }, {
+            "name": "All",
+            "active": false,
+            "collapsed": true,
+            "route": "/activity/all",
+            "icon": "",
+            "matIcon": "group",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          }
+        ]
       }
       ]
     }];

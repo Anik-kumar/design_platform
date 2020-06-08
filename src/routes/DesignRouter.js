@@ -8,21 +8,8 @@ const _ = require('lodash');
 const loggerService = require('../services/LoggingService');
 const userService = require('../services/UserService');
 const designService = require('../services/DesignService');
+const activityService = require('../services/ActivityService');
 let {ResUserModel} = require('../models/response/response.models');
-
-
-
-/**
- * This function to login user
- * @route POST /login
- * @group Authentication - Operations about user access
- * @param {string} email.required - username or email - eg: user@domain
- * @param {string} pass.required - user's password.
- * @produces application/json
- * @consumes application/json
- * @returns {Response.UserModel} 200 - An array of user info
- * @returns {Error}  default - Unexpected error
- */
 
 
 router.post('/new', async function(req, res, next){
@@ -31,7 +18,6 @@ router.post('/new', async function(req, res, next){
 
 	try{
     const result = await userService.uploadDesign(req.body.postTitle, req.body.title, req.body.type, req.body.tags, req.body.description);
-    
     if(result.success && _.isNil(result.error) && _.isEmpty(result.error)) {
       response.message = "User reset password verification is sent";
       response.success = true;

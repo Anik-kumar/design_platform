@@ -7,7 +7,7 @@ module.exports = class DesignService {
 
   }
 
-  sanitaizeTitle(title) {
+  static sanitaizeTitle(title) {
     let newTitle = title.replace(/[^a-zA-Z0-9]/g, '-');
     return newTitle;
   }
@@ -15,7 +15,7 @@ module.exports = class DesignService {
   static async create(designObj) {
     let result = {}, success = false, error = null;
     try {
-      let titlePath = this.sanitaizeTitle(designObj.title);
+      let titlePath = DesignService.sanitaizeTitle(designObj.title);
       result = await designRepository.createDesign(designObj.userId, designObj.designId, designObj.title, titlePath, designObj.type, designObj.fileSize, designObj.tags, designObj.url ,designObj.des, designObj.key, designObj.awsName);
       if (result.success && !_.isNil(result.data)) {
         console.log('Design creation Successful');

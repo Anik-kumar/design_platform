@@ -14,6 +14,7 @@ const userService = require('../services/UserService');
 const authService = require('../services/AuthService');
 const emailService = require('../services/email/EmailService');
 const fileService = require('../services/FileService');
+const activityService = require('../services/ActivityService');
 
 router.post('/ink', (req, res, next) => {
 
@@ -70,6 +71,7 @@ router.post('/login', async function(req, res, next) {
 				res.set({
 					'X-Auth-Token': token.token
 				});
+				await activityService.addActivityLlog(user.unique_id, "User " + user.name.first + ' ' + user.name.last + ', email: ' + user.email + ', loggedin at ' + new Date().toISOString(), []);
 			}
 		} else {
 			response = {
@@ -86,6 +88,26 @@ router.post('/login', async function(req, res, next) {
 	res.send(response);
 });
 
+router.post('/logout', async function(req, res, next) {
+	let response = {};
+	try {
+		let user_id = req.body.userId, name = req.body.name, email = req.body.email;
+		if(!_.isEmpty(user_id) && !_.isNil(user_id)) {
+			await activityService.addActivityLlog(user_id, "User " + name + ', email: ' + email + ', logged out at ' + new Date().toISOString(), []);
+			response = {message: 'User logged out.'}
+		} else {
+			response = {
+				"error": true,
+				"message": "Error in completing Logout process"
+			};
+		}
+	} catch (ex) {
+		console.log(ex);
+		loggerService.getDefaultLogger().error('[ROUTE]-[INDEX]-ERROR: Exception get request at /auth/login route: ' + JSON.stringify(ex));
+	}
+	console.log(" User signin property ->", response);
+	res.send(response);
+});
 
 
 router.post('/signup', async function(req, res, next) {
