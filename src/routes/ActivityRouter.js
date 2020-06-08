@@ -10,13 +10,15 @@ const activityService = require('../services/ActivityService');
 router.get('/mine/:offset/:limit', async (req, res, next) => {
     let response = {};
     console.log("user id => ", req.user_id);
+    let offset = req.params['offset'] || 0;
+    let limit = req.params['limit'] || 10;
     if(_.isNil(req.user_id)) {
       return res.status(401).send({
         message: "Unauthorized Access"
       });
     }
     try{
-      const result = await activityService.getActivityLogByUser(req.user_id);
+      const result = await activityService.getActivityLogByUser(req.user_id, offset, limit);
       console.log('Get activity result', result);
       if(result.success && _.isNil(result.error)) {
         response.data = result.data;

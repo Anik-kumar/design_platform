@@ -188,4 +188,154 @@ module.exports = class DesignService {
     }
   }
 
+  static async findDesignsAdminSubmitted(adminId) {
+    let result = {}, success = false, error = null;
+    try {
+      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer": "", "whereami.current_state": "submitted", });
+      if (result.success && !_.isNil(result.data)) {
+        console.log('Designs retrived successful');
+        success = true;
+      } else {
+        console.log('Design is not retrived', result);
+        success = false;
+        error = "DesignNotRetrived";
+      }
+    }catch (ex) {
+      loggerService.error({message: '[DesignService]-ERROR: Exception at findAllSubmitted(): ', error: ex});
+      success = false;
+      error = ex;
+    }
+
+    return {
+      data: result.data,
+      error: error,
+      success: success
+    }
+  }
+
+  static async findDesignsAdminApproved(userId) {
+    let result = {}, success = false, error = null;
+    try {
+      result = await designRepository.findOnlyForAdminUser({"user_unique_id": userId, "whereami.current_state": "approved"});
+      if (result.success && !_.isNil(result.data)) {
+        console.log('Designs retrived successful');
+        success = true;
+      } else {
+        console.log('Design is not retrived', result);
+        success = false;
+        error = "DesignNotRetrived";
+      }
+    }catch (ex) {
+      loggerService.error({message: '[DesignService]-ERROR: Exception at findAllSubmitted(): ', error: ex});
+      success = false;
+      error = ex;
+    }
+
+    return {
+      data: result.data,
+      error: error,
+      success: success
+    }
+  }
+
+  static async findDesignsAdminRejected(userId) {
+    let result = {}, success = false, error = null;
+    try {
+      result = await designRepository.findOnlyForAdminUser({"user_unique_id": userId, "whereami.current_state": "rejected"});
+      if (result.success && !_.isNil(result.data)) {
+        console.log('Designs retrived successful');
+        success = true;
+      } else {
+        console.log('Design is not retrived', result);
+        success = false;
+        error = "DesignNotRetrived";
+      }
+    }catch (ex) {
+      loggerService.error({message: '[DesignService]-ERROR: Exception at findAllSubmitted(): ', error: ex});
+      success = false;
+      error = ex;
+    }
+
+    return {
+      data: result.data,
+      error: error,
+      success: success
+    }
+  }
+
+  static async findDesignsAdminReviewing(adminId) {
+    let result = {}, success = false, error = null;
+    try {
+      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer": adminId, "whereami.current_state": "reviewing"});
+      if (result.success && !_.isNil(result.data)) {
+        console.log('Designs retrived successful');
+        success = true;
+      } else {
+        console.log('Design is not retrived', result);
+        success = false;
+        error = "DesignNotRetrived";
+      }
+    }catch (ex) {
+      loggerService.error({message: '[DesignService]-ERROR: Exception at findAllSubmitted(): ', error: ex});
+      success = false;
+      error = ex;
+    }
+
+    return {
+      data: result.data,
+      error: error,
+      success: success
+    }
+  }
+
+  static async findDesignsByState(state) {
+    let result = {}, success = false, error = null;
+    try {
+      result = await designRepository.findOnlyForAdminUser({"whereami.current_state": state});
+      if (result.success && !_.isNil(result.data)) {
+        console.log('Designs retrived successful');
+        success = true;
+      } else {
+        console.log('Design is not retrived', result);
+        success = false;
+        error = "DesignNotRetrived";
+      }
+    }catch (ex) {
+      loggerService.error({message: '[DesignService]-ERROR: Exception at findDesignsByState(): ', error: ex});
+      success = false;
+      error = ex;
+    }
+
+    return {
+      data: result.data,
+      error: error,
+      success: success
+    }
+  }
+
+  static async findDesignsByStateAndId(userId, state) {
+    let result = {}, success = false, error = null;
+    try {
+      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer": userId, "whereami.current_state": state});
+      if (result.success && !_.isNil(result.data)) {
+        console.log('Designs retrived successful');
+        success = true;
+      } else {
+        console.log('Design is not retrived', result);
+        success = false;
+        error = "DesignNotRetrived";
+      }
+    }catch (ex) {
+      loggerService.error({message: '[DesignService]-ERROR: Exception at findDesignsByStateAndId(): ', error: ex});
+      success = false;
+      error = ex;
+    }
+
+    return {
+      data: result.data,
+      error: error,
+      success: success
+    }
+  }
+
 }

@@ -61,9 +61,6 @@ app.use('/api/token', tokenRouter);
 app.use('/api/design', designRouter);
 app.use('/api/activity', activityRouter);
 
-
-
-
 app.use('/', indexRoutes);
 
 

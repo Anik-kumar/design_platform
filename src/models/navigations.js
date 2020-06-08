@@ -311,10 +311,49 @@ var testNav = [
               "padding-top": "0px"
             },
           }, {
-            "name": "Verify Designs",
+            "name": "Submitted Designs",
             "active": false,
             "collapsed": true,
             "route": "/admin/review",
+            "icon": "key",
+            "matIcon": "",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          }, {
+            "name": "Approved Designs",
+            "active": false,
+            "collapsed": true,
+            "route": "/admin/approved",
+            "icon": "key",
+            "matIcon": "",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          }, {
+            "name": "Rejected Designs",
+            "active": false,
+            "collapsed": true,
+            "route": "/admin/rejected",
+            "icon": "key",
+            "matIcon": "",
+            "faIcon": "",
+            "badge": "",
+            "style": {
+              "height": "0px",
+              "padding-top": "0px"
+            },
+          }, {
+            "name": "Current Reviewing Designs",
+            "active": false,
+            "collapsed": true,
+            "route": "/admin/reviewing",
             "icon": "key",
             "matIcon": "",
             "faIcon": "",

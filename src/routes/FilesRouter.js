@@ -53,11 +53,11 @@ router.post('/upload', uploader.single('file'), async function(req, res, next) {
   }
   try {
     req.file.path = process.env.ROOT_PATH + '/' + req.file.path;
-    console.log('file: ', req.file);
+    console.log('file ',req.file);
 
     /**
-    * file object
-    {
+     * file object
+     * {
         fieldname: 'file',
         originalname: 'brain_3-wallpaper-1366x768.jpg',
         encoding: '7bit',
@@ -66,8 +66,9 @@ router.post('/upload', uploader.single('file'), async function(req, res, next) {
         filename: 'a87b568a100c538d0e7a3b3845f0aee4',
         path: '/home/anik/workspace-bit/design_platform/tmp/a87b568a100c538d0e7a3b3845f0aee4',
         size: 585380
-    }
-    */
+      }
+     */
+    
 
     fileDatabaseName = req.file.filename;
     fileOrginalName = req.file.originalname;
@@ -76,7 +77,16 @@ router.post('/upload', uploader.single('file'), async function(req, res, next) {
     result = await S3Service.upload(req.file, designAwsName);
     //let result2 = await imgmService.createThumbs(req.file);
     console.log("result => ", result);
-      
+   /**
+    *result object
+    * {
+       ETag: '"7dc10532e2058d66744cd1398811518d"',
+       Location: 'https://s3dpbucket.s3.ap-south-1.amazonaws.com/design/b6689fca-4244-456c-a8d7-0c11503a990c.jpg',
+       key: 'design/b6689fca-4244-456c-a8d7-0c11503a990c.jpg',
+       Key: 'design/b6689fca-4244-456c-a8d7-0c11503a990c.jpg',
+       Bucket: 's3dpbucket'
+     }
+    */
     // entry in database
     const designInfo = {
       userId: req.user_id,
@@ -95,13 +105,14 @@ router.post('/upload', uploader.single('file'), async function(req, res, next) {
     if(!_.isNil(result.Location)) {
       let designResult = await designService.create(designInfo);
       await activityService.addActivityLlog(designInfo.userId, "User " + designInfo.userId + ', created new design,' + designInfo.title + ', at ' + new Date().toISOString(), [designInfo]);  
+
       if(designResult.success && !_.isNil(designResult.error)) {
         console.log("fileservice Design Result -> ", designResult);
-      }else{
+      } else{
         console.log("fileservice Design Result error ", designResult);
       }
-    }else {
-      console.log("fileservice Design Result error");
+    } else {
+      console.log("Error in uploading design in S3");
     }
     fs.unlink(req.file.path, (err) => {
       if (err) throw err;

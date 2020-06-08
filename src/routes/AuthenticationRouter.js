@@ -109,7 +109,6 @@ router.post('/logout', async function(req, res, next) {
 	res.send(response);
 });
 
-
 router.post('/signup', async function(req, res, next) {
 	let response = {};
 

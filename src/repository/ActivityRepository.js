@@ -108,7 +108,7 @@ module.exports = class ActivityRepository {
    * Function to get activity log by last hours
    * @param {*} date 
    */
-  static async getActivityLogByUser(user_id) {
+  /*static async getActivityLogByUser(user_id) {
     let result = {}, success = true;
     try {
       if(isNil(user_id)) {
@@ -155,8 +155,65 @@ module.exports = class ActivityRepository {
       data: result,
       success: success
     }
-  }
+  }*/
 
+  static async getActivityLogByUser(user_id, offset, limit) {
+    let result = {}, success = true;
+    console.log(`user id ${user_id}, offset ${offset} limit ${limit}`);
+    try {
+      if(isNil(user_id)) {
+        return null;
+      }
+      if (isNil(offset)) {
+        offset = 0;
+      }
+      if (isNil(limit)) {
+        offset = 10;
+      }
+      let eDate = new Date();
+      let curHr = (new Date()).getHours()
+      eDate.setHours(0);
+      eDate.setMinutes(0);
+      eDate.setSeconds(0);
+      let sDate = new Date();
+      sDate.setHours(0);
+      sDate.setMinutes(0);
+      sDate.setSeconds(0);
+      sDate.setMonth(0); // this year only
+
+      // result = await Activity.find({
+      //   "user_id": user_id,
+      //   "ix_date": {
+      //       $gte: sDate,
+      //       $lte: eDate
+      //   },
+      // }).exec();
+      console.log(`sDate: ${sDate.toISOString()} eDate: ${eDate.toISOString()}`);
+      result = await Activity.aggregate([
+          { 
+            $match: { 
+              "user_id": user_id,
+              "ix_date": {
+                $gte: sDate,
+                $lte: eDate
+              }
+            }
+        },
+        { $sort: { date_created: -1 } },
+        { $skip : offset },
+        { $limit : limit }
+      ]).exec();
+    } catch (ex) {
+      console.log(ex);
+      loggerService.error({message: '[ActivityRepository]-ERROR: Exception at getActivityLogByUser(): ', error: ex});
+      success = false;
+    }
+
+    return {
+      data: result,
+      success: success
+    }
+  }
   /**
    * Function to create new activity
    * @param {*} user_id 
