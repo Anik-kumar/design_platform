@@ -22,6 +22,8 @@ const emailRouter = require('./routes/EmailRouter');
 const filesRouter = require('./routes/FilesRouter');
 const tokenRouter = require('./routes/TokenRouter');
 const designRouter = require('./routes/DesignRouter');
+const activityRouter = require('./routes/ActivityRouter');
+
 
 const ConfigLoader = require('./config/ConfigLoader');
 const config = new ConfigLoader();
@@ -58,8 +60,7 @@ app.use('/api/email', emailRouter);
 app.use('/api/files', filesRouter);
 app.use('/api/token', tokenRouter);
 app.use('/api/design', designRouter);
-
-
+app.use('/api/activity', activityRouter);
 app.use('/', indexRoutes);
 
 

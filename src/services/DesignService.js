@@ -7,7 +7,7 @@ module.exports = class DesignService {
 
   }
 
-  sanitaizeTitle(title) {
+  static sanitaizeTitle(title) {
     let newTitle = title.replace(/[^a-zA-Z0-9]/g, '-');
     return newTitle;
   }
@@ -15,7 +15,7 @@ module.exports = class DesignService {
   static async create(designObj) {
     let result = {}, success = false, error = null;
     try {
-      let titlePath = this.sanitaizeTitle(designObj.title);
+      let titlePath = DesignService.sanitaizeTitle(designObj.title);
       result = await designRepository.createDesign(designObj.userId, designObj.designId, designObj.title, titlePath, designObj.type, designObj.fileSize, designObj.tags, designObj.url ,designObj.des, designObj.key, designObj.awsName);
       if (result.success && !_.isNil(result.data)) {
         console.log('Design creation Successful');
@@ -213,10 +213,10 @@ module.exports = class DesignService {
     }
   }
 
-  static async findDesignsAdminApproved(userId) {
+  static async findDesignsAdminApproved(adminId) {
     let result = {}, success = false, error = null;
     try {
-      result = await designRepository.findOnlyForAdminUser({"user_unique_id": userId, "whereami.current_state": "approved"});
+      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer": adminId, "whereami.current_state": "approved"});
       if (result.success && !_.isNil(result.data)) {
         console.log('Designs retrived successful');
         success = true;
@@ -238,10 +238,10 @@ module.exports = class DesignService {
     }
   }
 
-  static async findDesignsAdminRejected(userId) {
+  static async findDesignsAdminRejected(adminId) {
     let result = {}, success = false, error = null;
     try {
-      result = await designRepository.findOnlyForAdminUser({"user_unique_id": userId, "whereami.current_state": "rejected"});
+      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer": adminId, "whereami.current_state": "rejected"});
       if (result.success && !_.isNil(result.data)) {
         console.log('Designs retrived successful');
         success = true;

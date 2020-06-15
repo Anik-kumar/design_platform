@@ -9,6 +9,7 @@ const uuidv1 = require('uuid/v1');
 const loggingService = require('../services/LoggingService');
 const fileService = require('../services/FileService');
 const designService = require('../services/DesignService');
+const activityService = require('../services/ActivityService');
 const S3Service = require('../services/S3Service');
 const imgmService = require('../services/ImageManipulationService');
 const { GoogleCloudStorageService, GCStorage, createBucket, listBuckets, verifyAuthentication} = require('../services/GoogleCloudStorageService');
@@ -102,15 +103,16 @@ router.post('/upload', uploader.single('file'), async function(req, res, next) {
     console.log("designinfo => ", designInfo);
 
     if(!_.isNil(result.Location)) {
-      let designResult = designService.create(designInfo);
+      let designResult = await designService.create(designInfo);
+      await activityService.addActivityLlog(designInfo.userId, "User " + designInfo.userId + ', created new design,' + designInfo.title + ', at ' + new Date().toISOString(), [designInfo]);  
 
       if(designResult.success && !_.isNil(designResult.error)) {
         console.log("fileservice Design Result -> ", designResult);
-      }else{
-        console.log("fileservice Design Result error");
+      } else{
+        console.log("fileservice Design Result error ", designResult);
       }
-    }else {
-      console.log("fileservice Design Result error");
+    } else {
+      console.log("Error in uploading design in S3");
     }
     fs.unlink(req.file.path, (err) => {
       if (err) throw err;
