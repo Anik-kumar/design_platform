@@ -32,7 +32,6 @@ router.post('/verify-hs', async function(req, res, next) {
 			response.error = err.name || "TokenExpiredError";
 			response.email = null;
     }
-
     if(err.message == "jwt malformed") {
       response.message = "Your token is invalid";
       response.success = false;
@@ -69,7 +68,6 @@ router.post('/verify-rs', async function(req, res, next) {
 			response.success = false;
 			response.error = err.name || "TokenExpiredError";
     }
-
     if(err.message == "jwt malformed") {
       response.message = "Your token is invalid";
       response.success = false;

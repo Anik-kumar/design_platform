@@ -4,6 +4,7 @@ const {isNil, isEmpty, cloneDeep } = require('lodash');
 const fs = require('fs');
 
 const { USER_TYPE } = require('../models/user_type.enum');
+
 const jwtService = require('../services/JwtService');
 const loggerService = require('../services/LoggingService');
 const authorizationService = require('../services/AuthorizationService');

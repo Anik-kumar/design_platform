@@ -17,6 +17,7 @@ const emailService = require('../services/email/EmailService');
 const fileService = require('../services/FileService');
 const activityService = require('../services/ActivityService');
 
+
 router.post('/ink', (req, res, next) => {
 
 	console.log(' This is auth routes /ink');
@@ -98,6 +99,7 @@ router.post('/login', async function(req, res, next) {
 	console.log(" User signin property ->", response);
 	res.send(response);
 });
+
 
 router.post('/logout', async function(req, res, next) {
 	let response = {};
