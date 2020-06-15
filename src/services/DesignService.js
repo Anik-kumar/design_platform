@@ -213,10 +213,10 @@ module.exports = class DesignService {
     }
   }
 
-  static async findDesignsAdminApproved(userId) {
+  static async findDesignsAdminApproved(adminId) {
     let result = {}, success = false, error = null;
     try {
-      result = await designRepository.findOnlyForAdminUser({"user_unique_id": userId, "whereami.current_state": "approved"});
+      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer": adminId, "whereami.current_state": "approved"});
       if (result.success && !_.isNil(result.data)) {
         console.log('Designs retrived successful');
         success = true;
@@ -238,10 +238,10 @@ module.exports = class DesignService {
     }
   }
 
-  static async findDesignsAdminRejected(userId) {
+  static async findDesignsAdminRejected(adminId) {
     let result = {}, success = false, error = null;
     try {
-      result = await designRepository.findOnlyForAdminUser({"user_unique_id": userId, "whereami.current_state": "rejected"});
+      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer": adminId, "whereami.current_state": "rejected"});
       if (result.success && !_.isNil(result.data)) {
         console.log('Designs retrived successful');
         success = true;

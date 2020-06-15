@@ -24,16 +24,16 @@ module.exports =  class JwtService {
 
 				if (_.isNil(sOptions) || _.isEmpty(sOptions)) {
 					sOptions = {
-						issuer: "pijus.me",
-						subject: "admin@pijus.me",
+						issuer: "aniksarker.com",
+						subject: "admin@aniksarker.com",
 						audience: "Client_Identity" // this should be provided by client
 					}
 				}
 				
 				//var token = jwt.sign(payload, privateKEY, signOptions);
 				var token = jwt.sign(data, privateKEY, {
-					issuer: "pijus.me",
-					subject: "admin@pijus.me",
+					issuer: "aniksarker.com",
+					subject: "admin@aniksarker.com",
 					audience:  'Client_Identity',
 					expiresIn:  expiresIn,
 					algorithm:  "RS256"
@@ -55,8 +55,8 @@ module.exports =  class JwtService {
 		return new Promise ((resolve, reject) => {
 			try {
 				var verifyOptions = {
-					issuer: "pijus.me",
-					subject: "admin@pijus.me",
+					issuer: "aniksarker.com",
+					subject: "admin@aniksarker.com",
 					audience:  'Client_Identity',
 					algorithms:  ["RS256"]
 				};
@@ -83,8 +83,8 @@ module.exports =  class JwtService {
 		
 			try {
 				var verifyOptions = {
-					issuer: "pijus.me",
-					subject: "admin@pijus.me",
+					issuer: "aniksarker.com",
+					subject: "admin@aniksarker.com",
 					audience:  'Client_Identity',
 					algorithms:  ["RS256"]
 				};
@@ -117,16 +117,16 @@ module.exports =  class JwtService {
 				let expiresIn = options['expiresIn'] || 960;
 				if (_.isNil(sOptions) || _.isEmpty(sOptions)) {
 					sOptions = {
-						issuer: "pijus.me",
-						subject: "admin@pijus.me",
+						issuer: "aniksarker.com",
+						subject: "admin@aniksarker.com",
 						audience: "Client_Identity" // this should be provided by client
 					}
 				}
 				
 				//var token = jwt.sign(payload, privateKEY, signOptions);
 				var token = jwt.sign(data, privateKEY, {
-					issuer: "pijus.me",
-					subject: "admin@pijus.me",
+					issuer: "aniksarker.com",
+					subject: "admin@aniksarker.com",
 					audience:  'Client_Identity',
 					expiresIn:  expiresIn,
 					algorithm:  "HS256"
@@ -152,8 +152,8 @@ module.exports =  class JwtService {
 				let decoded;
 				let tokenExpired;
 				var verifyOptions = {
-					issuer: "pijus.me",
-					subject: "admin@pijus.me",
+					issuer: "aniksarker.com",
+					subject: "admin@aniksarker.com",
 					audience:  'Client_Identity',
 					expiresIn:  expiresIn,
 					algorithm:  "HS256"

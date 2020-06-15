@@ -94,7 +94,7 @@ router.post('/renew', async function(req, res, next) {
 		const result = await jwtService.verify(token, { 'expiresIn' : 10*60 });
 		console.log('Renew token: ', result);
 		if(result.success ) {
-			let token = await authService.getTokenWithExpireTime(result.data.email, result.data.unique_id, 24*60*60);
+			let token = await authService.getTokenWithExpireTime(result.data.email, result.data.unique_id, result.data.user_type, 24*60*60);
 			res.set({
 				'X-Auth-Token': token.token
 			});
@@ -137,7 +137,7 @@ router.post('/renew', async function(req, res, next) {
 	 		const result = await jwtService.verify(token, { 'expiresIn' : 10*60 });
 	 		console.log('Renew token: ', result);
 	 		if(result.success ) {
-	 			let token = await authService.getTokenWithExpireTime(result.data.email, result.data.unique_id, 24*60*60);
+				let token = await authService.getTokenWithExpireTime(result.data.email, result.data.unique_id,  result.data.user_type, 24*60*60);
 	 			res.set({
 	 				'X-Auth-Token': token.token
 	 			});
