@@ -1,3 +1,4 @@
+const { USER_TYPE } = require('../models/user_type.enum');
 var testNav = [
     {
       "name": "CORE",
@@ -155,235 +156,386 @@ var testNav = [
     }
   ];
 
-  
-  var baseNav = [{
+
+  var nav_root = [{
       "name": "CORE",
-      "menu": [{
-        "name": "Dashboard",
-        "active": false,
-        "collapsed": true,
-        "route": "/dashboard",
-        "icon": "monitor",
-        "matIcon": "",
-        "faIcon": "",
-        "style": {
-          "height": "0px",
-          "padding-top": "0px"
-        },
-        "subMenu": []
-      }, 
+      "menu": []
+  }];
+
+  var base_nav = [{
+    "name": "Dashboard",
+    "active": false,
+    "collapsed": true,
+    "route": "/dashboard",
+    "access_level": USER_TYPE.DESIGNER,
+    "icon": "monitor",
+    "matIcon": "",
+    "faIcon": "",
+    "style": {
+      "height": "0px",
+      "padding-top": "0px"
+    },
+    "subMenu": []
+  }, 
+  {
+    "name": "Design",
+    "active": false,
+    "collapsed": true,
+    "route": "/design",
+    "access_level": USER_TYPE.DESIGNER,
+    "icon": "image",
+    "matIcon": "",
+    "faIcon": "",
+    "style": {
+      "height": "0px",
+      "padding-top": "0px"
+    },
+    "subMenu": [
       {
-        "name": "Design",
+        "name": "Create",
         "active": false,
         "collapsed": true,
-        "route": "/design",
-        "icon": "image",
+        "route": "/design/new",
+        "access_level": USER_TYPE.DESIGNER,
+        "icon": "plus",
         "matIcon": "",
         "faIcon": "",
+        "badge": "",
         "style": {
           "height": "0px",
           "padding-top": "0px"
         },
-        "subMenu": [
-          {
-            "name": "Create",
-            "active": false,
-            "collapsed": true,
-            "route": "/design/new",
-            "icon": "plus",
-            "matIcon": "",
-            "faIcon": "",
-            "badge": "",
-            "style": {
-              "height": "0px",
-              "padding-top": "0px"
-            },
-          },
-          {
-            "name": "My Designs",
-            "active": false,
-            "collapsed": true,
-            "route": "/design/list",
-            "icon": "",
-            "matIcon": "photo_library",
-            "faIcon": "",
-            "badge": "",
-            "style": {
-              "height": "0px",
-              "padding-top": "0px"
-            },
-          }
-        ]
-      }, 
-      {
-        "name": "Profile",
-        "active": false,
-        "collapsed": true,
-        "route": "/profile",
-        "icon": "user",
-        "matIcon": "",
-        "faIcon": "",
-        "style": {
-          "height": "0px",
-          "padding-top": "0px"
-        },
-        "subMenu": [
-          {
-            "name": "General",
-            "active": false,
-            "collapsed": true,
-            "route": "/profile/basic",
-            "icon": "settings",
-            "matIcon": "",
-            "faIcon": "",
-            "badge": "",
-            "style": {
-              "height": "0px",
-              "padding-top": "0px"
-            },
-          }, {
-            "name": "Change Password",
-            "active": false,
-            "collapsed": true,
-            "route": "/profile/password",
-            "icon": "key",
-            "matIcon": "",
-            "faIcon": "",
-            "badge": "",
-            "style": {
-              "height": "0px",
-              "padding-top": "0px"
-            },
-          },
-          {
-            "name": "Advanced",
-            "active": false,
-            "collapsed": true,
-            "route": "/profile/advance",
-            "icon": "tool",
-            "matIcon": "",
-            "faIcon": "",
-            "badge": "",
-            "style": {
-              "height": "0px",
-              "padding-top": "0px"
-            },
-          },
-        ]
       },
       {
-        "name": "Admin",
+        "name": "My Designs",
         "active": false,
         "collapsed": true,
-        "route": "/admin",
+        "route": "/design/list",
+        "access_level": USER_TYPE.DESIGNER,
         "icon": "",
-        "matIcon": "security",
+        "matIcon": "photo_library",
         "faIcon": "",
+        "badge": "",
         "style": {
           "height": "0px",
           "padding-top": "0px"
         },
-        "subMenu": [
-          {
-            "name": "Dashboard",
-            "active": false,
-            "collapsed": true,
-            "route": "/admin",
-            "icon": "",
-            "matIcon": "dashboard",
-            "faIcon": "",
-            "badge": "",
-            "style": {
-              "height": "0px",
-              "padding-top": "0px"
-            },
-          }, {
-            "name": "Add Admin",
-            "active": false,
-            "collapsed": true,
-            "route": "/admin/new/admin",
-            "icon": "user-plus",
-            "matIcon": "",
-            "faIcon": "",
-            "badge": "",
-            "style": {
-              "height": "0px",
-              "padding-top": "0px"
-            },
-          }, {
-            "name": "Submitted Designs",
-            "active": false,
-            "collapsed": true,
-            "route": "/admin/review",
-            "icon": "key",
-            "matIcon": "",
-            "faIcon": "",
-            "badge": "",
-            "style": {
-              "height": "0px",
-              "padding-top": "0px"
-            },
-          }, {
-            "name": "Approved Designs",
-            "active": false,
-            "collapsed": true,
-            "route": "/admin/approved",
-            "icon": "key",
-            "matIcon": "",
-            "faIcon": "",
-            "badge": "",
-            "style": {
-              "height": "0px",
-              "padding-top": "0px"
-            },
-          }, {
-            "name": "Rejected Designs",
-            "active": false,
-            "collapsed": true,
-            "route": "/admin/rejected",
-            "icon": "key",
-            "matIcon": "",
-            "faIcon": "",
-            "badge": "",
-            "style": {
-              "height": "0px",
-              "padding-top": "0px"
-            },
-          }, {
-            "name": "Current Reviewing Designs",
-            "active": false,
-            "collapsed": true,
-            "route": "/admin/reviewing",
-            "icon": "key",
-            "matIcon": "",
-            "faIcon": "",
-            "badge": "",
-            "style": {
-              "height": "0px",
-              "padding-top": "0px"
-            },
-          },
-          {
-            "name": "Create Poll",
-            "active": false,
-            "collapsed": true,
-            "route": "/admin/new/poll",
-            "icon": "tool",
-            "matIcon": "",
-            "faIcon": "",
-            "badge": "",
-            "style": {
-              "height": "0px",
-              "padding-top": "0px"
-            },
-          },
-        ]
       }
+    ]
+  }, 
+  {
+    "name": "Profile",
+    "active": false,
+    "collapsed": true,
+    "route": "/profile",
+    "access_level": USER_TYPE.VISITOR,
+    "icon": "user",
+    "matIcon": "",
+    "faIcon": "",
+    "style": {
+      "height": "0px",
+      "padding-top": "0px"
+    },
+    "subMenu": [
+      {
+        "name": "General",
+        "active": false,
+        "collapsed": true,
+        "route": "/profile/basic",
+        "access_level": USER_TYPE.VISITOR,
+        "icon": "settings",
+        "matIcon": "",
+        "faIcon": "",
+        "badge": "",
+        "style": {
+          "height": "0px",
+          "padding-top": "0px"
+        },
+      }, {
+        "name": "Change Password",
+        "active": false,
+        "collapsed": true,
+        "route": "/profile/password",
+        "access_level": USER_TYPE.VISITOR,
+        "icon": "key",
+        "matIcon": "",
+        "faIcon": "",
+        "badge": "",
+        "style": {
+          "height": "0px",
+          "padding-top": "0px"
+        },
+      },
+      {
+        "name": "Advanced",
+        "active": false,
+        "collapsed": true,
+        "route": "/profile/advance",
+        "access_level": USER_TYPE.VISITOR,
+        "icon": "tool",
+        "matIcon": "",
+        "faIcon": "",
+        "badge": "",
+        "style": {
+          "height": "0px",
+          "padding-top": "0px"
+        },
+      },
+    ]
+  },
+  {
+    "name": "Activity",
+    "active": false,
+    "collapsed": true,
+    "route": "/activity",
+    "access_level": USER_TYPE.DESIGNER,
+    "icon": "",
+    "matIcon": "security",
+    "faIcon": "",
+    "style": {
+      "height": "0px",
+      "padding-top": "0px"
+    },
+    "subMenu": [
+      {
+        "name": "Mine",
+        "active": false,
+        "collapsed": true,
+        "route": "/activity/mine",
+        "access_level": USER_TYPE.DESIGNER,
+        "icon": "",
+        "matIcon": "person",
+        "faIcon": "",
+        "badge": "",
+        "style": {
+          "height": "0px",
+          "padding-top": "0px"
+        },
+      }, {
+        "name": "All",
+        "active": false,
+        "collapsed": true,
+        "route": "/activity/all",
+        "access_level": USER_TYPE.REVIEWER,
+        "icon": "",
+        "matIcon": "group",
+        "faIcon": "",
+        "badge": "",
+        "style": {
+          "height": "0px",
+          "padding-top": "0px"
+        },
+      }
+    ]
+  }];
+  var admin = [
+    {
+      "name": "Admin",
+      "active": false,
+      "collapsed": true,
+      "route": "/admin",
+      "access_level": USER_TYPE.REVIEWER,
+      "icon": "",
+      "matIcon": "security",
+      "faIcon": "",
+      "style": {
+        "height": "0px",
+        "padding-top": "0px"
+      },
+      "subMenu": [
+        {
+          "name": "Dashboard",
+          "active": false,
+          "collapsed": true,
+          "route": "/admin",
+          "access_level": USER_TYPE.REVIEWER,
+          "icon": "",
+          "matIcon": "dashboard",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        }, {
+          "name": "Add Admin",
+          "active": false,
+          "collapsed": true,
+          "route": "/admin/new/admin",
+          "access_level": USER_TYPE.REVIEWER,
+          "icon": "user-plus",
+          "matIcon": "",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        }, {
+          "name": "Submitted Designs",
+          "active": false,
+          "collapsed": true,
+          "route": "/admin/submitted",
+          "access_level": USER_TYPE.REVIEWER,
+          "icon": "key",
+          "matIcon": "",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        }, {
+          "name": "Approved Designs",
+          "active": false,
+          "collapsed": true,
+          "route": "/admin/approved",
+          "access_level": USER_TYPE.REVIEWER,
+          "icon": "key",
+          "matIcon": "",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        }, {
+          "name": "Rejected Designs",
+          "active": false,
+          "collapsed": true,
+          "route": "/admin/rejected",
+          "access_level": USER_TYPE.REVIEWER,
+          "icon": "key",
+          "matIcon": "",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        }, {
+          "name": "Current Reviewing Designs",
+          "active": false,
+          "collapsed": true,
+          "route": "/admin/reviewing",
+          "access_level": USER_TYPE.REVIEWER,
+          "icon": "key",
+          "matIcon": "",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        },{
+          "name": "Create Poll",
+          "active": false,
+          "collapsed": true,
+          "route": "/admin/new/poll",
+          "access_level": USER_TYPE.ADMIN,
+          "icon": "tool",
+          "matIcon": "",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        }
       ]
-    }];
-
+    },
+    {
+      "name": "IAM",
+      "active": false,
+      "collapsed": true,
+      "route": "/iam",
+      "access_level": USER_TYPE.ADMIN,
+      "icon": "",
+      "matIcon": "security",
+      "faIcon": "",
+      "style": {
+        "height": "0px",
+        "padding-top": "0px"
+      },
+      "subMenu": [
+        {
+          "name": "User",
+          "active": false,
+          "collapsed": true,
+          "route": "/iam/user",
+          "access_level": USER_TYPE.ADMIN,
+          "icon": "",
+          "matIcon": "person",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        }, {
+          "name": "New User",
+          "active": false,
+          "collapsed": true,
+          "route": "/iam/user/new",
+          "access_level": USER_TYPE.ADMIN,
+          "icon": "",
+          "matIcon": "person",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        }, {
+          "name": "Active Users",
+          "active": false,
+          "collapsed": true,
+          "route": "/iam/user/active",
+          "access_level": USER_TYPE.ADMIN,
+          "icon": "",
+          "matIcon": "person",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        }, {
+          "name": "Reports",
+          "active": false,
+          "collapsed": true,
+          "route": "/iam/user/active",
+          "access_level": USER_TYPE.ADMIN,
+          "icon": "",
+          "matIcon": "person",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        }, {
+          "name": "Access",
+          "active": false,
+          "collapsed": true,
+          "route": "/iam/access",
+          "access_level": USER_TYPE.SUPER_ADMIN,
+          "icon": "",
+          "matIcon": "group",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        }
+      ]
+    }
+  ]  
 
 module.exports = {
   test_nav: testNav,
-  base_nav: baseNav
+  nav_root: nav_root,
+  base_nav: base_nav, 
+  admin_nav: admin
 }

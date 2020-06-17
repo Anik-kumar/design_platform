@@ -17,7 +17,7 @@ function InterceptRequest(req, res, next) {
     smsApp.bindEmitter(req);
     smsApp.bindEmitter(res);
     smsApp.run(() => {
-        console.log('---- InterceptRequest ----', req.headers.authorization );
+        // console.log('---- InterceptRequest ----', req.headers.authorization );
         
         let token = req.headers['authorization'] || null;
         if(!_.isNil(token)) {
@@ -25,17 +25,11 @@ function InterceptRequest(req, res, next) {
             try {
                 let result = jwtService.verifySync(token);
                 if(!_.isNil(result) && !_.isNil(result.data)){
+                    req['user_type'] = result.data.user_type;
+                    req['email'] = result.data.email;
                     req['user_id'] = result.data.unique_id;
-                    console.log('Interceptor -> user_id ', req['user_id']);
+                    console.log(`Interceptor -> user_id, email, user type:  ${req['user_id']}, ${req['email']}, ${req['user_type']}`);
                 }
-                // jwtService.verify(token).then(result => {
-                //     if(!_.isNil(result) && !_.isNil(result.data)){
-                //         req['user_id'] = result.data.unique_id;
-                //         console.log('Interceptor -> user_id ', req['user_id']);
-                //     }
-                // }).catch(error => {
-                //     console.log(error);
-                // })
                 
             } catch(err) {
                 console.log("Token verification failed ->", err);

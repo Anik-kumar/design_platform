@@ -5,6 +5,7 @@ const fs = require('fs');
 const Joi = require('@hapi/joi');
 const uuid = require('uuid/v4')
 const bcrypt = require('bcrypt');
+const { USER_TYPE, USER_TYPE_TEXT } = require('../models/user_type.enum');
 const saltRounds = 10;
 
 
@@ -14,6 +15,8 @@ const userService = require('../services/UserService');
 const authService = require('../services/AuthService');
 const emailService = require('../services/email/EmailService');
 const fileService = require('../services/FileService');
+const activityService = require('../services/ActivityService');
+
 
 router.post('/ink', (req, res, next) => {
 
@@ -55,7 +58,7 @@ router.post('/login', async function(req, res, next) {
 				}
 			} else {
 				let user = result.result;
-				let token = await authService.getTokenWithExpireTime(result.result.email, result.result.unique_id, 24*60*60);
+				let token = await authService.getTokenWithExpireTime(result.result.email, result.result.unique_id, result.result.user_type, 24*60*60);
 				response = {
 					name: user.name,
 					unique_id: user.unique_id,
@@ -67,9 +70,20 @@ router.post('/login', async function(req, res, next) {
 					token: token.token
 				};
 				// console.log('response with token: ', response);
-				res.set({
-					'X-Auth-Token': token.token
-				});
+				// res.set({
+				// 	'X-Auth-Token': token.token
+				// });
+				let reqSet = {
+					'X-auth-token': token.token,
+					'X-ut': user.user_type
+				};
+
+				if (user.user_type == USER_TYPE.ADMIN || user.user_type == USER_TYPE.SUPER_ADMIN || user.user_type == USER_TYPE.ROOT_USER || user.user_type == USER_TYPE.REVIEWER) {
+					reqSet['X-atu'] = true;
+				}
+				console.log('reqSet: ', reqSet);
+				res.set(reqSet);
+				await activityService.addActivityLlog(user.unique_id, "User " + user.name.first + ' ' + user.name.last + ', email: ' + user.email + ', loggedin at ' + new Date().toISOString(), []);
 			}
 		} else {
 			response = {
@@ -87,6 +101,26 @@ router.post('/login', async function(req, res, next) {
 });
 
 
+router.post('/logout', async function(req, res, next) {
+	let response = {};
+	try {
+		let user_id = req.body.userId, name = req.body.name, email = req.body.email;
+		if(!_.isEmpty(user_id) && !_.isNil(user_id)) {
+			await activityService.addActivityLlog(user_id, "User " + name + ', email: ' + email + ', logged out at ' + new Date().toISOString(), []);
+			response = {message: 'User logged out.'}
+		} else {
+			response = {
+				"error": true,
+				"message": "Error in completing Logout process"
+			};
+		}
+	} catch (ex) {
+		console.log(ex);
+		loggerService.getDefaultLogger().error('[ROUTE]-[INDEX]-ERROR: Exception get request at /auth/login route: ' + JSON.stringify(ex));
+	}
+	console.log(" User signin property ->", response);
+	res.send(response);
+});
 
 router.post('/signup', async function(req, res, next) {
 	let response = {};
@@ -105,6 +139,32 @@ router.post('/signup', async function(req, res, next) {
 	try{
 		// form data validation
 		await regSchema.validateAsync(req.body);
+		let userType = USER_TYPE.VISITOR;
+
+		switch(req.body['userType']) {
+			case USER_TYPE_TEXT.VISITOR:
+				userType = USER_TYPE.VISITOR
+				break;
+			case USER_TYPE_TEXT.DESIGNER:
+				userType = USER_TYPE.DESIGNER
+				break;
+			case USER_TYPE_TEXT.CUSTOMER:
+				userType = USER_TYPE.CUSTOMER
+				break;
+			case USER_TYPE_TEXT.DC:
+				userType = USER_TYPE.DC
+				break;
+			case USER_TYPE_TEXT.REVIEWER:
+				userType = USER_TYPE.REVIEWER
+				break;
+			case USER_TYPE_TEXT.ADMIN:
+				userType = USER_TYPE.ADMIN
+				break;
+			case USER_TYPE_TEXT.SUPER_ADMIN:
+				userType = USER_TYPE.SUPER_ADMIN
+				break;
+		}
+		req.body['userType'] = userType
 
 		// generating verification email template
 		try {

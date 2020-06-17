@@ -42,18 +42,15 @@ module.exports = class AuthService {
 	}
 
 
-	static async getTokenWithExpireTime(user, unique_id, time) {
+	static async getTokenWithExpireTime(user, unique_id, user_type, time) {
 		if (time == null || time == undefined) {
 			time = config.tokenExpiryTime;
 		}
-		// var user = { user, pass };
-		// const token = jwt.sign({user}, config.secret, {
-		// 	expiresIn: time // in sec.
-		// });
 
 		let signedToken = await jwtService.sign({
 			email: user,
-			unique_id: unique_id
+			unique_id: unique_id,
+			user_type: user_type
 		}, {
 			expiresIn: time // in sec.
 		});
