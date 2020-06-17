@@ -304,7 +304,6 @@ router.get('/admin/get-submitted', async (req, res, next) => {
 });
 
 
-
 router.get('/admin/get-approved', async (req, res, next) => {
   let response = {};
   const adminId = req.user_id || req.headers.user_id;
