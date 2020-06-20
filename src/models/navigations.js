@@ -441,6 +441,66 @@ var testNav = [
             "height": "0px",
             "padding-top": "0px"
           },
+        },
+        {
+          "name": "All Submitted Designs",
+          "active": false,
+          "collapsed": true,
+          "route": "/admin/all/submitted",
+          "access_level": USER_TYPE.SUPER_ADMIN,
+          "icon": "tool",
+          "matIcon": "",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        },
+        {
+          "name": "All Approved Designs",
+          "active": false,
+          "collapsed": true,
+          "route": "/admin/all/approved",
+          "access_level": USER_TYPE.SUPER_ADMIN,
+          "icon": "tool",
+          "matIcon": "",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        },
+        {
+          "name": "All Reviewing Designs",
+          "active": false,
+          "collapsed": true,
+          "route": "/admin/all/reviewing",
+          "access_level": USER_TYPE.SUPER_ADMIN,
+          "icon": "tool",
+          "matIcon": "",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        },
+        {
+          "name": "All Rejected Designs",
+          "active": false,
+          "collapsed": true,
+          "route": "/admin/all/rejected",
+          "access_level": USER_TYPE.SUPER_ADMIN,
+          "icon": "tool",
+          "matIcon": "",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
         }
       ]
     },

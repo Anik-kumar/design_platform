@@ -497,8 +497,8 @@ router.post('/admin/get-all-by-state', async (req, res, next) => {
   const adminId = req.user_id || req.headers.user_id;
   const adminType = req.user_type || req.headers.user_type;
   
-  console.log("get-all-state => ", adminId);
-  console.log("get-all-state => ", searcheState);
+  console.log("get-all-by-state => ", adminId);
+  console.log("get-all-by-state => ", searcheState);
   if(_.isNil(adminId)) {
     return res.status(401).send({
       message: "Unauthorized Access"
@@ -508,7 +508,7 @@ router.post('/admin/get-all-by-state', async (req, res, next) => {
     
     if(adminType >= USER_TYPE.ADMIN) {
       const result = await designService.findDesignsByState(searcheState);
-      // console.log('Get Design Result', result);
+      console.log('Get Design Result', result);
       if(result.success && _.isNil(result.error)) {
         response.data = result.data;
         response.message = "User designs is retrived";
@@ -527,8 +527,8 @@ router.post('/admin/get-all-by-state', async (req, res, next) => {
     }
     res.status(200);
   } catch(error) {
-    console.log("Exception error in UserRouter /get-all-state. ", error);
-    response.message = "Exception error in /get-all-state";
+    console.log("Exception error in UserRouter /get-all-by-state. ", error);
+    response.message = "Exception error in /get-all-by-state";
     response.error = error;
     response.success = false;
   }
