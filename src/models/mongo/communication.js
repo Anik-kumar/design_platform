@@ -7,11 +7,11 @@ const schema = new mongoose.Schema({
 	from_user_id: { type: String, index: true, required: true },
 	to_user_id: { type: String, index: true, required: true },
   context_id: { type: String, index: true, required: true },
-  context_details: String,
+  //context_details: String, //
   comment: String,
   timestamp: {
     type: Date,
-    default: Date.now()
+    default: Date.now
   }
 });
 

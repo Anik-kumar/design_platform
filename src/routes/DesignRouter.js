@@ -9,6 +9,7 @@ const loggerService = require('../services/LoggingService');
 const userService = require('../services/UserService');
 const designService = require('../services/DesignService');
 const activityService = require('../services/ActivityService');
+const communicationService = require('../services/CommunicationService');
 let {ResUserModel} = require('../models/response/response.models');
 const { USER_TYPE, USER_TYPE_TEXT } = require('../models/user_type.enum');
 
@@ -74,7 +75,7 @@ router.get('/get-all', async (req, res, next) => {
 
 router.post('/find-one', async (req, res, next) => {
   let response = {};
-  console.log("getdesigns => ", req.user_id);
+  // console.log("getdesigns => ", req.user_id);
   if(_.isNil(req.user_id)) {
     return res.status(401).send({
       message: "Unauthorized Access"
@@ -96,8 +97,51 @@ router.post('/find-one', async (req, res, next) => {
     }
     res.status(200);
   } catch(error) {
-    console.log("Exception error in UserRouter /find-design. ", error);
-    response.message = "Exception error in /find-design";
+    console.log("Exception error in UserRouter /find-one. ", error);
+    response.message = "Exception error in /find-one";
+    response.error = error;
+    response.success = false;
+  }
+
+  return res.send(response);
+
+});
+
+router.post('/admin/find-one', async (req, res, next) => {
+  let response = {};
+  // console.log("getdesigns => ", req.user_id);
+  const adminId = req.user_id || req.headers.user_id;
+  const adminType = req.user_type || req.headers.user_type;
+  if(_.isNil(adminId)) {
+    return res.status(401).send({
+      message: "Unauthorized Access"
+    });
+  }
+  try{
+    if(adminType >= USER_TYPE.REVIEWER) {
+      const result = await designService.findOne({"design_id": req.body.design_id});
+      console.log('Get Design Result', result);
+      if(result.success && _.isNil(result.error)) {
+        response.data = result.data;
+        response.message = "User design is retrived";
+        response.error = null;
+        response.success = true;
+      }else {
+        response.data = result.data;
+        response.message = "User design is NOT retrived";
+        response.error = "Error in getDesignsRouter";
+        response.success = false;
+      }
+    }else {
+      response.data = null;
+      response.message = "Unauthorized User Access";
+      response.error = "Error in /admin/get-all";
+      response.success = false;
+    }
+    res.status(200);
+  } catch(error) {
+    console.log("Exception error in UserRouter /admin/find-one. ", error);
+    response.message = "Exception error in /admin/find-one";
     response.error = error;
     response.success = false;
   }
@@ -535,6 +579,51 @@ router.post('/admin/get-all-by-state', async (req, res, next) => {
 
   return res.send(response);
 
+});
+
+router.post('/admin/make-comment', async (req, res, next) => {
+  let response = {};
+  const adminId = req.user_id || req.headers.user_id;
+  const adminType = req.user_type || req.headers.user_type;
+  
+  console.log("make-comment => ", adminId);
+  if(_.isNil(adminId)) {
+    return res.status(401).send({
+      message: "Unauthorized Access"
+    });
+  }
+  try{
+    
+    if(adminType >= USER_TYPE.REVIEWER) {
+      const result = await communicationService.create(req.body);
+      
+      console.log('Make comment result', result);
+      if(result.success && _.isNil(result.error)) {
+        response.data = result.data;
+        response.message = "Make Comment action is Successful";
+        response.error = null;
+        response.success = true;
+      }else {
+        response.data = result.data;
+        response.message = "Make Comment action is not Successful";
+        response.error = "Error in /makeComment";
+        response.success = false;
+      }
+    }else {
+      return res.status(401).send({
+        message: "Unauthorized Access"
+      });
+    }
+
+    res.status(200);
+  } catch(error) {
+    console.log("Exception error in DesignRouter /make-comment. ", error);
+    response.message = "Exception error in /make-comment";
+    response.error = error;
+    response.success = false;
+  }
+
+  return res.send(response);
 });
 
 
