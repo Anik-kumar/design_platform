@@ -11,7 +11,7 @@ const designService = require('../services/DesignService');
 const activityService = require('../services/ActivityService');
 const communicationService = require('../services/CommunicationService');
 let {ResUserModel} = require('../models/response/response.models');
-const { USER_TYPE, USER_TYPE_TEXT } = require('../models/user_type.enum');
+const { USER_TYPE, USER_TYPE_TEXT, getUserTypeTextByEnum } = require('../models/user_type.enum');
 
 
 router.post('/new', async function(req, res, next){
@@ -402,7 +402,7 @@ router.get('/admin/get-rejected', async (req, res, next) => {
 
   console.log("get-rejected => ", adminId);
   // console.log("get-rejected => ", req.user_id);
-  console.log("get-rejected => ", userType);
+  console.log("get-rejected => ", adminType);
 
   if(_.isNil(adminId)) {
     return res.status(401).send({
@@ -603,6 +603,8 @@ router.post('/admin/make-comment', async (req, res, next) => {
         response.message = "Make Comment action is Successful";
         response.error = null;
         response.success = true;
+        let type = getUserTypeTextByEnum(adminType);
+        await activityService.addActivityLlog(adminId, `${type} (${adminId}) commented on Design (${req.body.design_id}) at  ${new Date().toISOString()}`, []);
       }else {
         response.data = result.data;
         response.message = "Make Comment action is not Successful";
@@ -629,12 +631,13 @@ router.post('/admin/make-comment', async (req, res, next) => {
 
 router.post('/state/review/:designid', async (req, res, next) => {
   const designId = req.params.designid;
-  const designOwnerId = req.body.designOwnerId;
+  const designOwnerId = req.body.userId;
   const adminId = req.user_id || req.headers.user_id;
   const adminType = req.user_type || req.headers.user_type;
   let response = {};
+  let today = new Date().toISOString();
   // console.log("/review/:designId => ", userId);
-  // console.log("/review/:designId -> ", designOwnerId);
+  console.log("/review/:designId -> ", designOwnerId);
   // console.log("/review/:designId > ", designId);
   if(_.isNil(adminId)) {
     return res.status(401).send({
@@ -650,7 +653,10 @@ router.post('/state/review/:designid', async (req, res, next) => {
     let updateObj = {
       'whereami.current_state': 'reviewing', 
       'whereami.previous_state': 'submitted',
-      'raw_design.reviewer': adminId
+      "raw_design.reviewed_by.user": adminId,
+      "raw_design.reviewed_by.date": today,
+      'raw_design.reviewer.id': adminId,
+      'raw_design.reviewer.type': adminType
     };
     if(adminType >= USER_TYPE.REVIEWER) {
       const result = await designService.updateOne(filterObj, updateObj);
@@ -660,6 +666,8 @@ router.post('/state/review/:designid', async (req, res, next) => {
         response.message = "User design state is changed to 'reviewing'";
         response.error = null;
         response.success = true;
+        let type = getUserTypeTextByEnum(adminType);
+        await activityService.addActivityLlog(adminId, `${type} (${adminId}) reviewing Design ${result.data.title} (${designId}) at  ${new Date().toISOString()}`, []);
       }else {
         response.data = result.data;
         response.message = "User design state is failed to change";
@@ -687,6 +695,7 @@ router.post('/state/submit/:designid', async (req, res, next) => {
   const adminId = req.user_id || req.headers.user_id;
   const adminType = req.user_type || req.headers.user_type;
   let response = {};
+  let today = new Date().toISOString();
   console.log("/state/submit/:title => ", adminId);
   console.log("/state/submit/:title ", designId);
   if(_.isNil(adminId)) {
@@ -701,10 +710,14 @@ router.post('/state/submit/:designid', async (req, res, next) => {
     };
     let updateObj = {
       'whereami.current_state': 'submitted', 
-      'whereami.previous_state': ''
+      'whereami.previous_state': '',
+      "raw_design.reviewed_by.user": adminId,
+      "raw_design.reviewed_by.date": today,
+      'raw_design.reviewer.id': adminId,
+      'raw_design.reviewer.type': adminType
     };
     
-    if(adminType >= USER_TYPE.REVIEWER) {
+    if(adminType >= USER_TYPE.ADMIN) {
 
       const result = await designService.updateOne(filterObj, updateObj);
       console.log('Get Design Result', result);
@@ -713,18 +726,21 @@ router.post('/state/submit/:designid', async (req, res, next) => {
         response.message = "User design state is changed to 'submitted'";
         response.error = null;
         response.success = true;
+        let type = getUserTypeTextByEnum(adminType);
+        await activityService.addActivityLlog(adminId, `${type} (${adminId}) submitted state Design ${result.data.title} (${designId}) at  ${new Date().toISOString()}`, []);
       }else {
         response.data = result.data;
         response.message = "User design state is failed to change";
         response.error = "Error in designReviewState";
         response.success = false;
       }
+      res.status(200);
     } else {
       response.message = "User is Unauthorized";
       response.error = "Unauthorized Action";
       response.success = false;
+      
     }
-    res.status(200);
   } catch(error) {
     console.log("Exception error in UserRouter /state/submit/:title. ", error);
     response.message = "Exception error in /state/submit/:title ";
@@ -740,7 +756,7 @@ router.post('/state/approve/:designid', async (req, res, next) => {
   const adminId = req.user_id || req.headers.user_id;
   const adminType = req.user_type || req.headers.user_type;
   let response = {};
-  let today = new Date().toISOString();
+  let today = new Date();
   console.log("/state/approve/:designid => ", adminId);
   console.log("/state/approve/:designid => ", designId);
   if(_.isNil(adminId)) {
@@ -755,30 +771,37 @@ router.post('/state/approve/:designid', async (req, res, next) => {
         "design_id": designId
       };
       let updateObj = {
-        'whereami.current_state': 'submitted', 
-        'whereami.previous_state': '',
+        'whereami.current_state': 'approved', 
+        'whereami.previous_state': 'reviewing',
         "raw_design.approved_by.user": adminId,
-        "raw_design.approved_by.date": today
+        "raw_design.approved_by.date": today,
+        "raw_design.reviewed_by.user": adminId,
+        "raw_design.reviewed_by.date": today,
+        'raw_design.reviewer.id': adminId,
+        'raw_design.reviewer.type': adminType
       };
       const result = await designService.updateOne(filterObj, updateObj);
       // console.log('Get Design Result', result);
       if(result.success && _.isNil(result.error)) {
         response.data = result.data;
-        response.message = "User design state is changed to 'submitted'";
+        response.message = "User design state is changed to 'Approved'";
         response.error = null;
         response.success = true;
+        let type = getUserTypeTextByEnum(adminType);
+        await activityService.addActivityLlog(adminId, `${type} (${adminId}) approved Design ${result.data.title} (${designId}) at  ${new Date().toISOString()}`, []);
       }else {
         response.data = result.data;
         response.message = "User design state is failed to change";
         response.error = "Error in designReviewState";
         response.success = false;
       }
+      res.status(200);
     } else {
       response.message = "User is Unauthorized";
       response.error = "Unauthorized Action";
       response.success = false;
     }
-    res.status(200);
+    
   } catch(error) {
     console.log("Exception error in UserRouter /state/approve/:designid. ", error);
     response.message = "Exception error in /state/approve/:designid ";
@@ -813,30 +836,37 @@ router.post('/state/reject/:designid', async (req, res, next) => {
         'whereami.current_state': 'rejected', 
         'whereami.previous_state': 'reviewing',
         "raw_design.rejected_by.user": adminId,
-        "raw_design.rejected_by.date": today
+        "raw_design.rejected_by.date": today,
+        "raw_design.reviewed_by.user": adminId,
+        "raw_design.reviewed_by.date": today,
+        'raw_design.reviewer.id': adminId,
+        'raw_design.reviewer.type': adminType
       };
       const result = await designService.updateOne(filterObj, updateObj);
       console.log('Get Design Result', result);
       if(result.success && _.isNil(result.error)) {
         response.data = result.data;
-        response.message = "User design state is changed to 'submitted'";
+        response.message = "User design state is changed to 'Rejected'";
         response.error = null;
         response.success = true;
+        let type = getUserTypeTextByEnum(adminType);
+        await activityService.addActivityLlog(adminId, `${type} (${adminId}) rejected Design ${result.data.title} (${designId}) at  ${new Date().toISOString()}`, []);
       }else {
         response.data = result.data;
         response.message = "User design state is failed to change";
         response.error = "Error in designReviewState";
         response.success = false;
       }
+      res.status(200);
     } else {
       response.message = "User is Unauthorized";
       response.error = "Unauthorized Action";
       response.success = false;
     }
-    res.status(200);
+    
   } catch(error) {
-    console.log("Exception error in UserRouter /state/submit/:designid. ", error);
-    response.message = "Exception error in /state/submit/:designid ";
+    console.log("Exception error in UserRouter /state/reject/:designid. ", error);
+    response.message = "Exception error in /state/reject/:designid ";
     response.error = error;
     response.success = false;
   }

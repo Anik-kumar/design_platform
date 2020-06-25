@@ -191,7 +191,7 @@ module.exports = class DesignService {
   static async findDesignsAdminSubmitted(adminId) {
     let result = {}, success = false, error = null;
     try {
-      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer": "", "whereami.current_state": "submitted", });
+      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer.id": "", "whereami.current_state": "submitted" });
       if (result.success && !_.isNil(result.data)) {
         console.log('Designs retrived successful');
         success = true;
@@ -216,7 +216,7 @@ module.exports = class DesignService {
   static async findDesignsAdminApproved(adminId) {
     let result = {}, success = false, error = null;
     try {
-      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer": adminId, "whereami.current_state": "approved"});
+      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer.id": adminId, "whereami.current_state": "approved"});
       if (result.success && !_.isNil(result.data)) {
         console.log('Designs retrived successful');
         success = true;
@@ -241,7 +241,7 @@ module.exports = class DesignService {
   static async findDesignsAdminRejected(adminId) {
     let result = {}, success = false, error = null;
     try {
-      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer": adminId, "whereami.current_state": "rejected"});
+      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer.id": adminId, "whereami.current_state": "rejected"});
       if (result.success && !_.isNil(result.data)) {
         console.log('Designs retrived successful');
         success = true;
@@ -266,7 +266,7 @@ module.exports = class DesignService {
   static async findDesignsAdminReviewing(adminId) {
     let result = {}, success = false, error = null;
     try {
-      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer": adminId, "whereami.current_state": "reviewing"});
+      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer.id": adminId, "whereami.current_state": "reviewing"});
       if (result.success && !_.isNil(result.data)) {
         console.log('Designs retrived successful');
         success = true;
@@ -313,10 +313,10 @@ module.exports = class DesignService {
     }
   }
 
-  static async findDesignsByStateAndId(userId, state) {
+  static async findDesignsByStateAndId(adminId, state) {
     let result = {}, success = false, error = null;
     try {
-      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer": userId, "whereami.current_state": state});
+      result = await designRepository.findOnlyForAdminUser({"raw_design.reviewer.id": adminId, "whereami.current_state": state});
       if (result.success && !_.isNil(result.data)) {
         console.log('Designs retrived successful');
         success = true;
