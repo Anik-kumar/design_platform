@@ -1,4 +1,5 @@
 const mongoService = require('../../services/MongoService');
+const { number } = require('joi');
 
 const mongoose = mongoService.getClient();
 
@@ -20,20 +21,20 @@ const schema = new mongoose.Schema({
 		key: String,
 		aws_name: String,
 		reviewer: {
-			type: String,
-			index: true
+			id: { type: String, index: true },
+			user_type: Number
 		},
 		reviewed_by: {
 			user: String,
-			date: Date
+			date: { type: Date}
 		},
 		approved_by: {
 			user: String,
-			date: Date
+			date: { type: Date}
 		},
 		rejected_by: {
 			user: String,
-			date: Date
+			date: { type: Date}
 		}
 	},
 	photos: [{

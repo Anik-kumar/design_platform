@@ -28,7 +28,10 @@ module.exports = class UserRepository {
           tag: tags,
           key: key,
           aws_name: awsName,
-          reviewer: "",
+          reviewer: {
+            id: '',
+            type: 0
+          },
           reviewed_by: {
             user: "",
             date: null
