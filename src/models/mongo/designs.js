@@ -35,7 +35,8 @@ const schema = new mongoose.Schema({
 		rejected_by: {
 			user: String,
 			date: { type: Date}
-		}
+		},
+		is_public: {type: Boolean, index: true}
 	},
 	photos: [{
 		title: String,
@@ -66,7 +67,7 @@ const schema = new mongoose.Schema({
 	},
 	year_month_index: { type: String, index: true}, //2020-01
 	whereami: {
-		current_state: String,
+		current_state: {type: String, index: true},
 		previous_state: String
 	}
 });

@@ -23,6 +23,7 @@ const filesRouter = require('./routes/FilesRouter');
 const tokenRouter = require('./routes/TokenRouter');
 const designRouter = require('./routes/DesignRouter');
 const activityRouter = require('./routes/ActivityRouter');
+const communicationRouter = require('./routes/CommunicatioRouter');
 
 
 const ConfigLoader = require('./config/ConfigLoader');
@@ -61,6 +62,7 @@ app.use('/api/files', filesRouter);
 app.use('/api/token', tokenRouter);
 app.use('/api/design', designRouter);
 app.use('/api/activity', activityRouter);
+app.use('/api/comm', communicationRouter);
 app.use('/', indexRoutes);
 
 

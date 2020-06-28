@@ -6,8 +6,6 @@ module.exports = class CommunicationRepository {
 
   constructor() { }
 
-
-
   /**
    * adds comment to db
    * returns all designs in db
@@ -25,6 +23,33 @@ module.exports = class CommunicationRepository {
 
     try{
       result = await Communications.create(data);
+      // console.log("From CommunicationRepository result => ", result);
+      if(!result) {
+        success = false;
+      }
+    } catch(ex) {
+      loggerService.error({message: '[CommunicationRepository]-ERROR:  Exception at addComment(): ', error: ex});
+      success = false;
+    }
+
+    return {
+      success: success,
+      data: result
+    }
+  }
+
+  /**
+   * adds comment to db
+   * returns all designs in db
+   * 
+   */
+  static async findByContext(filter) {
+    let success = true;
+    let result;
+    
+
+    try{
+      result = await Communications.find(filter);
       // console.log("From CommunicationRepository result => ", result);
       if(!result) {
         success = false;

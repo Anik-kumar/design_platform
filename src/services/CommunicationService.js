@@ -61,7 +61,7 @@ module.exports = class DesignService {
     }
   }
 
-  // working
+  // todo
   static async updateOne(filterObj, designObj) {
     let result = {}, success = false, error = null;
     try {
@@ -76,6 +76,34 @@ module.exports = class DesignService {
       }
     }catch (ex) {
       loggerService.error({message: '[DesignService]-ERROR: Exception at update(): ', error: ex});
+      success = false;
+      error = ex;
+    }
+
+    return {
+      data: result.data,
+      error: error,
+      success: success
+    }
+  }
+
+  
+  static async getCommentsByUser(contextId) {
+    let result = {}, success = false, error = null;
+    try {
+      
+      // console.log("Comment obj " , commentObj);
+      result = await communicationRepository.findByContext({'context_id': contextId});
+      if (result.success && !_.isNil(result.data)) {
+        console.log('Comments are retrieved');
+        success = true;
+      } else {
+        console.log('Failed to retireve Comments');
+        success = false;
+        error = "CommentNotRetrieved";
+      }
+    }catch (ex) {
+      loggerService.error({message: '[CommunicationService]-ERROR: Exception at getCommentsByUser(): ', error: ex});
       success = false;
       error = ex;
     }
