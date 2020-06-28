@@ -163,6 +163,21 @@ var testNav = [
   }];
 
   var base_nav = [{
+    "name": "Home",
+    "active": false,
+    "collapsed": true,
+    "route": "/home",
+    "access_level": USER_TYPE.DESIGNER,
+    "icon": "home",
+    "matIcon": "",
+    "faIcon": "",
+    "style": {
+      "height": "0px",
+      "padding-top": "0px"
+    },
+    "subMenu": []
+  }, 
+  {
     "name": "Dashboard",
     "active": false,
     "collapsed": true,
@@ -176,7 +191,7 @@ var testNav = [
       "padding-top": "0px"
     },
     "subMenu": []
-  }, 
+  },
   {
     "name": "Design",
     "active": false,
@@ -362,6 +377,20 @@ var testNav = [
           "active": false,
           "collapsed": true,
           "route": "/admin/new/admin",
+          "access_level": USER_TYPE.ADMIN,
+          "icon": "user-plus",
+          "matIcon": "",
+          "faIcon": "",
+          "badge": "",
+          "style": {
+            "height": "0px",
+            "padding-top": "0px"
+          },
+        }, {
+          "name": "All Users",
+          "active": false,
+          "collapsed": true,
+          "route": "/admin/users/all",
           "access_level": USER_TYPE.REVIEWER,
           "icon": "user-plus",
           "matIcon": "",

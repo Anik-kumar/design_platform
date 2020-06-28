@@ -43,7 +43,8 @@ module.exports = class UserRepository {
           rejected_by: {
             user: "",
             date: null
-          }
+          },
+          is_public: false
         },
         photos: [{
           title: "",
@@ -231,7 +232,7 @@ module.exports = class UserRepository {
   }
 
   /**
-   * returns all designs in db
+   * returns all designs as admin
    * 
    */
   static async findOnlyForAdminUser(filter) {
@@ -256,7 +257,7 @@ module.exports = class UserRepository {
   }
 
   /**
-   * returns all designs in db
+   * returns all designs of single user
    * 
    */
   static async findAdminApproved(userId) {
@@ -297,7 +298,30 @@ module.exports = class UserRepository {
         success = false;
       }
     } catch (ex) {
-      loggerService.error({message: '[UserRepository]-ERROR: Exception at updateDesignState(): ', error: ex});
+      loggerService.error({message: '[DesignRepository]-ERROR: Exception at updateDesignState(): ', error: ex});
+      success = false;
+    }
+
+    return {
+      data: result,
+      success: success
+    }
+  }
+
+  static async findAllPublicDesigns(filterObj, sortParam) {
+    let result = {}, success = false;
+    // console.log('userRepo -> ', filterObj);
+    // console.log('userRepo -> ', udesignObj);
+    try {
+      
+      result = await Designs.find(filterObj).sort(sortParam);
+      if(result.ok == 1 || result.length > 0) {
+        success = true;
+      }else {
+        success = false;
+      }
+    } catch (ex) {
+      loggerService.error({message: '[DesignRepository]-ERROR: Exception at findAllPublicDesigns(): ', error: ex});
       success = false;
     }
 

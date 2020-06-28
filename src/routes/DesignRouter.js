@@ -581,53 +581,6 @@ router.post('/admin/get-all-by-state', async (req, res, next) => {
 
 });
 
-router.post('/admin/make-comment', async (req, res, next) => {
-  let response = {};
-  const adminId = req.user_id || req.headers.user_id;
-  const adminType = req.user_type || req.headers.user_type;
-  
-  console.log("make-comment => ", adminId);
-  if(_.isNil(adminId)) {
-    return res.status(401).send({
-      message: "Unauthorized Access"
-    });
-  }
-  try{
-    
-    if(adminType >= USER_TYPE.REVIEWER) {
-      const result = await communicationService.create(req.body);
-      
-      console.log('Make comment result', result);
-      if(result.success && _.isNil(result.error)) {
-        response.data = result.data;
-        response.message = "Make Comment action is Successful";
-        response.error = null;
-        response.success = true;
-        let type = getUserTypeTextByEnum(adminType);
-        await activityService.addActivityLlog(adminId, `${type} (${adminId}) commented on Design (${req.body.design_id}) at  ${new Date().toISOString()}`, []);
-      }else {
-        response.data = result.data;
-        response.message = "Make Comment action is not Successful";
-        response.error = "Error in /makeComment";
-        response.success = false;
-      }
-    }else {
-      return res.status(401).send({
-        message: "Unauthorized Access"
-      });
-    }
-
-    res.status(200);
-  } catch(error) {
-    console.log("Exception error in DesignRouter /make-comment. ", error);
-    response.message = "Exception error in /make-comment";
-    response.error = error;
-    response.success = false;
-  }
-
-  return res.send(response);
-});
-
 
 router.post('/state/review/:designid', async (req, res, next) => {
   const designId = req.params.designid;
@@ -656,7 +609,8 @@ router.post('/state/review/:designid', async (req, res, next) => {
       "raw_design.reviewed_by.user": adminId,
       "raw_design.reviewed_by.date": today,
       'raw_design.reviewer.id': adminId,
-      'raw_design.reviewer.type': adminType
+      'raw_design.reviewer.type': adminType,
+      'raw_design.is_public': false
     };
     if(adminType >= USER_TYPE.REVIEWER) {
       const result = await designService.updateOne(filterObj, updateObj);
@@ -714,7 +668,8 @@ router.post('/state/submit/:designid', async (req, res, next) => {
       "raw_design.reviewed_by.user": adminId,
       "raw_design.reviewed_by.date": today,
       'raw_design.reviewer.id': adminId,
-      'raw_design.reviewer.type': adminType
+      'raw_design.reviewer.type': adminType,
+      'raw_design.is_public': false
     };
     
     if(adminType >= USER_TYPE.ADMIN) {
@@ -778,7 +733,8 @@ router.post('/state/approve/:designid', async (req, res, next) => {
         "raw_design.reviewed_by.user": adminId,
         "raw_design.reviewed_by.date": today,
         'raw_design.reviewer.id': adminId,
-        'raw_design.reviewer.type': adminType
+        'raw_design.reviewer.type': adminType,
+        'raw_design.is_public': true
       };
       const result = await designService.updateOne(filterObj, updateObj);
       // console.log('Get Design Result', result);
@@ -840,7 +796,8 @@ router.post('/state/reject/:designid', async (req, res, next) => {
         "raw_design.reviewed_by.user": adminId,
         "raw_design.reviewed_by.date": today,
         'raw_design.reviewer.id': adminId,
-        'raw_design.reviewer.type': adminType
+        'raw_design.reviewer.type': adminType,
+        'raw_design.is_public': false
       };
       const result = await designService.updateOne(filterObj, updateObj);
       console.log('Get Design Result', result);
@@ -872,6 +829,54 @@ router.post('/state/reject/:designid', async (req, res, next) => {
   }
 
   return res.send(response);
+});
+
+
+router.get('/public-designs', async (req, res, next) => {
+  let response = {};
+  const userId = req.user_id || req.headers.user_id;
+  const userType = req.user_type || req.headers.user_type;
+  const recentSql = "'raw_design.reviewed_by.date': -1";
+
+  console.log("public-designs => ", userId);
+  // console.log("get-approved => ", req.user_id);
+  if(_.isNil(userId)) {
+    return res.status(401).send({
+      message: "Unauthorized Access"
+    });
+  }
+  try{
+    // const userObj = await userService.findUserById(userId);
+    if( userType >= USER_TYPE.DESIGNER) {
+      const result = await designService.findAllPublicDesigns();
+      console.log('Get Design Result', result);
+      if(result.success && _.isNil(result.error)) {
+        response.data = result.data;
+        response.message = "User public designs are retrived";
+        response.error = null;
+        response.success = true;
+      }else {
+        response.data = result.data;
+        response.message = "User public designs are NOT retrived";
+        response.error = "Error in /design/public-designs";
+        response.success = false;
+      }
+    } else {
+      response.data = null;
+      response.message = "Unauthorized User Access";
+      response.error = "Error in /design/public-designs";
+      response.success = false;
+    }
+    res.status(200);
+  } catch(error) {
+    console.log("Exception error in UserRouter /design/public-designs. ", error);
+    response.message = "Exception error in /design/public-designs";
+    response.error = error;
+    response.success = false;
+  }
+
+  return res.send(response);
+
 });
 
 

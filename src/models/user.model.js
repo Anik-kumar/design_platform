@@ -1,6 +1,6 @@
 var UserModel = {
-	unique_id: String,
-	email: String,
+	unique_id: { type: String, index: true},
+	email: { type: String, index: true},
 	name: {
 		first: String,
 		last: String
@@ -8,7 +8,7 @@ var UserModel = {
 	pass: String,
 	phone: String,
 	gender: String,
-	user_type: Number,
+	user_type: { type: Number, index: true},
 	DOB: Date,
 	address: {
 		house: Number,

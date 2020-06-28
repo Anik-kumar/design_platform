@@ -338,4 +338,29 @@ module.exports = class DesignService {
     }
   }
 
+  static async findAllPublicDesigns(sortParam) {
+    let result = {}, success = false, error = null;
+    try {
+      result = await designRepository.findAllPublicDesigns({"raw_design.is_public": true}, {'date_created': -1});
+      if (result.success && !_.isNil(result.data)) {
+        console.log('Designs retrived successful');
+        success = true;
+      } else {
+        console.log('Design is not retrived', result);
+        success = false;
+        error = "DesignNotRetrived";
+      }
+    }catch (ex) {
+      loggerService.error({message: '[DesignService]-ERROR: Exception at findAllPublicDesigns(): ', error: ex});
+      success = false;
+      error = ex;
+    }
+
+    return {
+      data: result.data,
+      error: error,
+      success: success
+    }
+  }
+
 }

@@ -101,7 +101,6 @@ module.exports = class UserService {
 			}
 		} catch (e) {
 			console.log("Exception error in findUserById() in UserService. " + e);
-			next(e);
 		}
 
 		return {
@@ -119,11 +118,6 @@ module.exports = class UserService {
 	static async signup(signup) {
 		let result = {}, success = true, token = '';
 		try {
-			// let subscription = await subscriptionService.getSubscriptionByCode(signup.subscription);
-			// console.log('subscription: ', subscription);
-			// if (subscription.success) {
-			// 	signup.subscription = subscription.data;
-			// }
 
 			result = await userRepository.createUser(signup.unique_id, signup.email, signup.pass, signup.userType, signup.firstName, signup.lastName, signup.phone, signup.gender, signup.dob);
 			if (result.success) {
@@ -164,29 +158,6 @@ module.exports = class UserService {
 		let updateUser;
 
     try{
-      // result = await userRepository.findOne({'email': userEmail, 'verification.email.email_sent': true});
-	  //
-      // if(result.success) {
-		// updateUser = await userRepository.updateOne({
-		// 	'email': userEmail,
-		// 	'verification.email.email_sent': true
-		// }, {
-		// 	'verification.email.verified': true,
-		// 	'verification.email.email_sent': false,
-		// 	'is_verified': true,
-		// });
-	  //
-		// if(updateUser.success) {
-		// 	found = true;
-		// 	console.log('UserService>>  User verify status updated');
-		// }else {
-		// 	found = false;
-		// 	console.log('UserService>>  User verify status update failed');
-		// }
-      // }else {
-		// 		found = false;
-		// 		console.log('UserService>>  User not found');
-      // }
 		updateUser = await userRepository.updateOne({
 			'email': userEmail,
 			'verification.email.email_sent': true
@@ -501,5 +472,62 @@ module.exports = class UserService {
 		}
 
 	}
+
+	static async getAllUsers() {
+		let result, success = true, data, error;
+
+		try {
+			result = await userRepository.findAllUsers();
+			if (result.success) {
+				data = result.result;
+				error = null;
+			} else {
+				success = false;
+				data = "";
+				error = 'UsersNotFound';
+			}
+		} catch (e) {
+			console.log("Exception error in getAllUsers() in UserService. " + e);
+			success = false;
+			data = "";
+			error = 'Exception error in getAllUsers() in UserService';
+		}
+
+		return {
+			success: success,
+			data: data,
+			error: error
+		}
+
+	}
+
+	static async findUsersByType(filter) {
+		let result, success = true, data, error;
+
+		try {
+			result = await userRepository.findAll(filter);
+			if (result.success) {
+				data = result.result;
+				error = null;
+			} else {
+				success = false;
+				data = "";
+				error = 'UsersNotFound';
+			}
+		} catch (e) {
+			console.log("Exception error in findUsersByType() in UserService. " + e);
+			success = false;
+			data = "";
+			error = 'Exception error in findUsersByType() in UserService';
+		}
+
+		return {
+			success: success,
+			data: data,
+			error: error
+		}
+
+	}
+	
 
 };
