@@ -170,7 +170,7 @@ router.get('/profile', async function(req, res, next) {
 });
 
 
-router.get('/get-all-users', async (req, res, next) => {
+router.get('/all-users', async (req, res, next) => {
   let response = {};
   const adminId = req.user_id || req.headers.user_id;
   const adminType = req.user_type || req.headers.user_type;
@@ -215,7 +215,7 @@ router.get('/get-all-users', async (req, res, next) => {
 });
 
 // not used in angular
-router.post('/get-users-by-type', async (req, res, next) => {
+router.post('/users-by-type', async (req, res, next) => {
   let response = {};
   const adminId = req.user_id || req.headers.user_id;
   const adminType = req.user_type || req.headers.user_type;
@@ -261,7 +261,7 @@ router.post('/get-users-by-type', async (req, res, next) => {
 });
 
 // not used in angular
-router.post('/get-verified-users', async (req, res, next) => {
+router.get('/verified-users', async (req, res, next) => {
   let response = {};
   const adminId = req.user_id || req.headers.user_id;
   const adminType = req.user_type || req.headers.user_type;
@@ -305,7 +305,7 @@ router.post('/get-verified-users', async (req, res, next) => {
   res.send(response);
 });
 // not used in angular
-router.post('/get-not-verified-users', async (req, res, next) => {
+router.get('/not-verified-users', async (req, res, next) => {
   let response = {};
   const adminId = req.user_id || req.headers.user_id;
   const adminType = req.user_type || req.headers.user_type;

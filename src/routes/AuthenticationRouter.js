@@ -18,9 +18,10 @@ const fileService = require('../services/FileService');
 const activityService = require('../services/ActivityService');
 
 
-router.post('/ink', (req, res, next) => {
+router.get('/ink', (req, res, next) => {
 
 	console.log(' This is auth routes /ink');
+	res.status(200).send("This message is from  api/auth/ink")
 
 });
 
