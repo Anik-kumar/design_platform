@@ -183,8 +183,8 @@ router.get('/details/:title', async (req, res, next) => {
   const title = req.params.title;
   const userId = req.user_id | req.headers.user_id;
   let response = {};
-  console.log("/details/:title => ", userId);
-  console.log("/details/:title ", title);
+  // console.log("/details/:title => ", userId);
+  // console.log("/details/:title ", title);
   if(_.isNil(userId)) {
     return res.status(401).send({
       message: "Unauthorized Access"
@@ -192,7 +192,7 @@ router.get('/details/:title', async (req, res, next) => {
   }
 
   try {
-    const result = await designService.findOne({"user_unique_id": userId, "title_path": title});
+    const result = await designService.findOne({"title_path": title});
     console.log('Get Design Result', result);
     if(result.success && _.isNil(result.error)) {
       response.data = result.data;
